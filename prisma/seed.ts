@@ -45,8 +45,8 @@ async function main(): Promise<void> {
       name: 'Growth',
       slug: 'growth',
       description: 'For growing teams',
-      monthlyPriceCents: 4900, // $49/month
-      annualPriceCents: 47000, // $470/year (~20% discount)
+      monthlyPriceCents: 4900,
+      annualPriceCents: 47000,
       projectsLimit: 5,
       usersLimit: 10,
       integrationsLimit: 10,
@@ -70,13 +70,13 @@ async function main(): Promise<void> {
       name: 'Scale',
       slug: 'scale',
       description: 'For larger organizations',
-      monthlyPriceCents: 14900, // $149/month
-      annualPriceCents: 143000, // $1430/year (~20% discount)
+      monthlyPriceCents: 14900,
+      annualPriceCents: 143000,
       projectsLimit: 50,
       usersLimit: 100,
-      integrationsLimit: -1, // Unlimited
-      widgetsLimit: -1, // Unlimited
-      responsesPerMonth: -1, // Unlimited
+      integrationsLimit: -1,
+      widgetsLimit: -1,
+      responsesPerMonth: -1,
       featuresJson: {
         basicDashboard: true,
         advancedAnalytics: true,
@@ -126,22 +126,27 @@ async function main(): Promise<void> {
     },
   });
 
-  await prisma.orgMembership.upsert({
+  // Create or find membership
+  const existingMembership = await prisma.orgMembership.findUnique({
     where: {
       organizationId_userId: {
         organizationId: demoOrg.id,
         userId: demoUser.id,
       },
     },
-    update: {},
-    create: {
-      organizationId: demoOrg.id,
-      userId: demoUser.id,
-      role: OrgRole.OWNER,
-    },
   });
 
-  // Create subscription - use organizationId for lookup since id must be UUID
+  if (!existingMembership) {
+    await prisma.orgMembership.create({
+      data: {
+        organizationId: demoOrg.id,
+        userId: demoUser.id,
+        role: OrgRole.OWNER,
+      },
+    });
+  }
+
+  // Create subscription
   const existingSubscription = await prisma.subscription.findFirst({
     where: { organizationId: demoOrg.id },
   });
@@ -165,87 +170,98 @@ async function main(): Promise<void> {
   // ============================================================================
   console.log('Creating demo project...');
 
-  const plantasiaProject = await prisma.project.upsert({
-    where: { id: 'plantasia-demo-project' },
-    update: {},
-    create: {
-      id: 'plantasia-demo-project',
+  // Find or create project by name within org
+  let plantasiaProject = await prisma.project.findFirst({
+    where: {
       organizationId: demoOrg.id,
       name: 'Plantasia Nursery Co.',
-      description: 'Demo project for a plant nursery e-commerce site',
-      status: ProjectStatus.ACTIVE,
-      createdByUserId: demoUser.id,
     },
   });
 
+  if (!plantasiaProject) {
+    plantasiaProject = await prisma.project.create({
+      data: {
+        organizationId: demoOrg.id,
+        name: 'Plantasia Nursery Co.',
+        description: 'Demo project for a plant nursery e-commerce site',
+        status: ProjectStatus.ACTIVE,
+        createdByUserId: demoUser.id,
+      },
+    });
+  }
+
   // Personas
-  const personas = [
+  const personaData = [
     {
-      id: 'persona-affluent',
       name: 'Affluent Plant Enthusiast',
       description: 'High-income customers passionate about rare and premium plants',
       attributes: { segment: 'premium', avgOrderValue: 250 },
     },
     {
-      id: 'persona-casual',
       name: 'Casual Shopper',
       description: 'First-time or occasional buyers looking for easy-care plants',
       attributes: { segment: 'casual', avgOrderValue: 35 },
     },
     {
-      id: 'persona-gift',
       name: 'Gift Buyer',
       description: 'Customers purchasing plants as gifts for others',
       attributes: { segment: 'gift', avgOrderValue: 60 },
     },
   ];
 
-  for (const persona of personas) {
-    await prisma.persona.upsert({
-      where: { id: persona.id },
-      update: {},
-      create: {
-        id: persona.id,
-        projectId: plantasiaProject.id,
-        name: persona.name,
-        description: persona.description,
-        attributes: persona.attributes,
-      },
+  const createdPersonas = [];
+  for (const p of personaData) {
+    let persona = await prisma.persona.findFirst({
+      where: { projectId: plantasiaProject.id, name: p.name },
     });
+    if (!persona) {
+      persona = await prisma.persona.create({
+        data: {
+          projectId: plantasiaProject.id,
+          name: p.name,
+          description: p.description,
+          attributes: p.attributes,
+        },
+      });
+    }
+    createdPersonas.push(persona);
   }
 
-  console.log(`✅ Created ${personas.length} personas`);
+  console.log(`✅ Created ${createdPersonas.length} personas`);
 
   // Moments
-  const moments = [
-    { id: 'moment-discovery', name: 'Plant Discovery', description: 'Browsing and discovering plants', iconEmoji: '🔍', orderIndex: 0 },
-    { id: 'moment-checkout', name: 'Checkout Experience', description: 'Adding to cart and completing purchase', iconEmoji: '🛒', orderIndex: 1 },
-    { id: 'moment-delivery', name: 'Delivery Experience', description: 'Receiving the order', iconEmoji: '📦', orderIndex: 2 },
-    { id: 'moment-care', name: 'Plant Care Support', description: 'Getting help with plant care', iconEmoji: '🌱', orderIndex: 3 },
-    { id: 'moment-support', name: 'Customer Support', description: 'Interacting with support team', iconEmoji: '💬', orderIndex: 4 },
+  const momentData = [
+    { name: 'Plant Discovery', description: 'Browsing and discovering plants', iconEmoji: '🔍', orderIndex: 0 },
+    { name: 'Checkout Experience', description: 'Adding to cart and completing purchase', iconEmoji: '🛒', orderIndex: 1 },
+    { name: 'Delivery Experience', description: 'Receiving the order', iconEmoji: '📦', orderIndex: 2 },
+    { name: 'Plant Care Support', description: 'Getting help with plant care', iconEmoji: '🌱', orderIndex: 3 },
+    { name: 'Customer Support', description: 'Interacting with support team', iconEmoji: '💬', orderIndex: 4 },
   ];
 
-  for (const moment of moments) {
-    await prisma.moment.upsert({
-      where: { id: moment.id },
-      update: {},
-      create: {
-        id: moment.id,
-        projectId: plantasiaProject.id,
-        name: moment.name,
-        description: moment.description,
-        iconEmoji: moment.iconEmoji,
-        orderIndex: moment.orderIndex,
-      },
+  const createdMoments = [];
+  for (const m of momentData) {
+    let moment = await prisma.moment.findFirst({
+      where: { projectId: plantasiaProject.id, name: m.name },
     });
+    if (!moment) {
+      moment = await prisma.moment.create({
+        data: {
+          projectId: plantasiaProject.id,
+          name: m.name,
+          description: m.description,
+          iconEmoji: m.iconEmoji,
+          orderIndex: m.orderIndex,
+        },
+      });
+    }
+    createdMoments.push(moment);
   }
 
-  console.log(`✅ Created ${moments.length} moments`);
+  console.log(`✅ Created ${createdMoments.length} moments`);
 
   // Widgets
-  const widgets = [
+  const widgetData = [
     {
-      id: 'widget-post-purchase',
       name: 'Post-Purchase Survey',
       type: WidgetType.MODAL_CAPTURE,
       publicKey: 'qw_demo_postpurchase',
@@ -256,7 +272,6 @@ async function main(): Promise<void> {
       },
     },
     {
-      id: 'widget-delivery',
       name: 'Delivery Feedback',
       type: WidgetType.TOAST,
       publicKey: 'qw_demo_delivery',
@@ -267,7 +282,6 @@ async function main(): Promise<void> {
       },
     },
     {
-      id: 'widget-support',
       name: 'Support Rating',
       type: WidgetType.INLINE_EMBED,
       publicKey: 'qw_demo_support',
@@ -278,68 +292,77 @@ async function main(): Promise<void> {
     },
   ];
 
-  for (const widget of widgets) {
-    await prisma.csatWidget.upsert({
-      where: { id: widget.id },
-      update: {},
-      create: {
-        id: widget.id,
-        projectId: plantasiaProject.id,
-        name: widget.name,
-        type: widget.type,
-        publicKey: widget.publicKey,
-        configJson: widget.config,
-        isActive: true,
-      },
+  const createdWidgets = [];
+  for (const w of widgetData) {
+    let widget = await prisma.csatWidget.findFirst({
+      where: { projectId: plantasiaProject.id, name: w.name },
     });
+    if (!widget) {
+      widget = await prisma.csatWidget.create({
+        data: {
+          projectId: plantasiaProject.id,
+          name: w.name,
+          type: w.type,
+          publicKey: w.publicKey,
+          configJson: w.config,
+          isActive: true,
+        },
+      });
+    }
+    createdWidgets.push(widget);
   }
 
-  console.log(`✅ Created ${widgets.length} widgets`);
+  console.log(`✅ Created ${createdWidgets.length} widgets`);
 
   // Sample CSAT Responses
   console.log('Creating sample CSAT responses...');
 
-  const sampleResponses = [];
-  const now = new Date();
-
-  for (let i = 0; i < 50; i++) {
-    const daysAgo = Math.floor(Math.random() * 30);
-    const momentIndex = Math.floor(Math.random() * moments.length);
-    const personaIndex = Math.floor(Math.random() * personas.length);
-    const score = Math.floor(Math.random() * 3) + 3; // 3-5 score range
-
-    sampleResponses.push({
-      projectId: plantasiaProject.id,
-      momentId: moments[momentIndex].id,
-      personaId: personas[personaIndex].id,
-      widgetId: widgets[0].id,
-      score,
-      comment: score >= 4 ? 'Great experience!' : score === 3 ? 'Could be better' : null,
-      metadataJson: {},
-      createdAt: new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000),
-    });
-  }
-
-  await prisma.csatResponse.createMany({
-    data: sampleResponses,
-    skipDuplicates: true,
+  const existingResponses = await prisma.csatResponse.count({
+    where: { projectId: plantasiaProject.id },
   });
 
-  console.log(`✅ Created ${sampleResponses.length} sample CSAT responses`);
+  if (existingResponses === 0) {
+    const sampleResponses = [];
+    const now = new Date();
+
+    for (let i = 0; i < 50; i++) {
+      const daysAgo = Math.floor(Math.random() * 30);
+      const momentIndex = Math.floor(Math.random() * createdMoments.length);
+      const personaIndex = Math.floor(Math.random() * createdPersonas.length);
+      const score = Math.floor(Math.random() * 3) + 3;
+
+      sampleResponses.push({
+        projectId: plantasiaProject.id,
+        momentId: createdMoments[momentIndex].id,
+        personaId: createdPersonas[personaIndex].id,
+        widgetId: createdWidgets[0].id,
+        score,
+        comment: score >= 4 ? 'Great experience!' : score === 3 ? 'Could be better' : null,
+        metadataJson: {},
+        createdAt: new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000),
+      });
+    }
+
+    await prisma.csatResponse.createMany({
+      data: sampleResponses,
+    });
+
+    console.log(`✅ Created ${sampleResponses.length} sample CSAT responses`);
+  } else {
+    console.log(`✅ CSAT responses already exist (${existingResponses})`);
+  }
 
   // Demo Integrations
   console.log('Creating demo integrations...');
 
-  const integrations = [
+  const integrationData = [
     {
-      id: 'int-zendesk',
       type: IntegrationType.ZENDESK,
       direction: IntegrationDirection.INBOUND,
       displayName: 'Zendesk Support',
       description: 'Import satisfaction ratings from Zendesk tickets',
     },
     {
-      id: 'int-jira',
       type: IntegrationType.JIRA,
       direction: IntegrationDirection.OUTBOUND,
       displayName: 'Jira Product Board',
@@ -347,23 +370,28 @@ async function main(): Promise<void> {
     },
   ];
 
-  for (const integration of integrations) {
-    await prisma.integration.upsert({
-      where: { id: integration.id },
-      update: {},
-      create: {
-        id: integration.id,
+  for (const intg of integrationData) {
+    const existing = await prisma.integration.findFirst({
+      where: {
         organizationId: demoOrg.id,
-        type: integration.type,
-        direction: integration.direction,
-        displayName: integration.displayName,
-        description: integration.description,
-        isEnabled: true,
+        type: intg.type,
       },
     });
+    if (!existing) {
+      await prisma.integration.create({
+        data: {
+          organizationId: demoOrg.id,
+          type: intg.type,
+          direction: intg.direction,
+          displayName: intg.displayName,
+          description: intg.description,
+          isEnabled: true,
+        },
+      });
+    }
   }
 
-  console.log(`✅ Created ${integrations.length} demo integrations`);
+  console.log(`✅ Created ${integrationData.length} demo integrations`);
 
   console.log('');
   console.log('🎉 Seed completed successfully!');
