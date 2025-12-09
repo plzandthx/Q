@@ -59,7 +59,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     // Generate a unique ID if not provided
-    const inputId = id || React.useId();
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
     const descriptionId = `${inputId}-description`;
     const errorId = `${inputId}-error`;
 

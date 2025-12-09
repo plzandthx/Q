@@ -41,7 +41,7 @@ export default function ProjectLayout({
         description={
           <div className="flex items-center gap-3">
             <Badge
-              variant={projectData.status === 'active' ? 'default' : 'secondary'}
+              variant={projectData.status === 'active' ? 'success' : 'secondary'}
             >
               {projectData.status}
             </Badge>

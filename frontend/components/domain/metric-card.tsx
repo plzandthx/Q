@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, type LucideIcon } from 'lucide-react';
 import { cn, formatScore, formatCompact, formatPercent } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { SimpleTooltip, TooltipProvider } from '@/components/ui/tooltip';
@@ -13,12 +13,15 @@ import { Skeleton } from '@/components/ui/skeleton';
  */
 
 export interface MetricCardProps {
-  label: string;
+  label?: string;
+  title?: string; // alias for label
   value: string | number;
   delta?: number;
+  change?: number; // alias for delta
   deltaLabel?: string;
+  changeLabel?: string; // alias for deltaLabel
   format?: 'number' | 'percent' | 'score' | 'compact';
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | LucideIcon;
   tooltip?: string;
   loading?: boolean;
   className?: string;
@@ -26,15 +29,33 @@ export interface MetricCardProps {
 
 const MetricCard: React.FC<MetricCardProps> = ({
   label,
+  title,
   value,
   delta,
+  change,
   deltaLabel = 'vs last period',
+  changeLabel,
   format = 'number',
   icon,
   tooltip,
   loading = false,
   className,
 }) => {
+  // Support aliases
+  const displayLabel = label || title || '';
+  const deltaValue = delta ?? change;
+  const deltaLabelValue = deltaLabel || changeLabel || 'vs last period';
+
+  // Render icon - handle both ReactNode and LucideIcon component types
+  const renderIcon = () => {
+    if (!icon) return null;
+    // Check if icon is a component type (function) vs a ReactNode (already rendered)
+    if (typeof icon === 'function') {
+      const IconComponent = icon as LucideIcon;
+      return <IconComponent className="h-4 w-4" />;
+    }
+    return icon;
+  };
   // Format value based on type
   const formatValue = (val: string | number): string => {
     if (typeof val === 'string') return val;
@@ -53,16 +74,16 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   // Determine trend direction
   const getTrendInfo = () => {
-    if (delta === undefined || delta === 0) {
+    if (deltaValue === undefined || deltaValue === 0) {
       return { direction: 'neutral' as const, Icon: Minus, color: 'text-muted-foreground' };
     }
-    if (delta > 0) {
+    if (deltaValue > 0) {
       return { direction: 'up' as const, Icon: TrendingUp, color: 'text-success' };
     }
     return { direction: 'down' as const, Icon: TrendingDown, color: 'text-danger' };
   };
 
-  const trend = delta !== undefined ? getTrendInfo() : null;
+  const trend = deltaValue !== undefined ? getTrendInfo() : null;
 
   if (loading) {
     return (
@@ -79,8 +100,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
   const content = (
     <Card padding="md" className={cn('space-y-2', className)}>
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{label}</span>
-        {icon && <span className="text-muted-foreground">{icon}</span>}
+        <span className="text-sm text-muted-foreground">{displayLabel}</span>
+        {icon && <span className="text-muted-foreground">{renderIcon()}</span>}
       </div>
 
       <div className="flex items-baseline gap-2">
@@ -96,12 +117,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
         <div className={cn('flex items-center gap-1 text-sm', trend.color)}>
           <trend.Icon className="h-4 w-4" />
           <span>
-            {delta! > 0 ? '+' : ''}
+            {deltaValue! > 0 ? '+' : ''}
             {format === 'percent'
-              ? `${delta!.toFixed(1)}pp`
-              : formatScore(delta!)}
+              ? `${deltaValue!.toFixed(1)}pp`
+              : formatScore(deltaValue!)}
           </span>
-          <span className="text-muted-foreground ml-1">{deltaLabel}</span>
+          <span className="text-muted-foreground ml-1">{deltaLabelValue}</span>
         </div>
       )}
     </Card>
@@ -131,11 +152,21 @@ const CsatMetricCard: React.FC<
     return 'text-danger';
   };
 
+  // Render icon - handle both ReactNode and LucideIcon component types
+  const renderIcon = () => {
+    if (!props.icon) return null;
+    if (typeof props.icon === 'function') {
+      const IconComponent = props.icon as LucideIcon;
+      return <IconComponent className="h-4 w-4" />;
+    }
+    return props.icon;
+  };
+
   return (
     <Card padding="md" className={cn('space-y-2', props.className)}>
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">{props.label}</span>
-        {props.icon && <span className="text-muted-foreground">{props.icon}</span>}
+        {props.icon && <span className="text-muted-foreground">{renderIcon()}</span>}
       </div>
 
       <div className="flex items-baseline gap-2">

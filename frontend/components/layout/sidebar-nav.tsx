@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   FolderKanban,
-  Widget,
+  LayoutGrid,
   Plug,
   Settings,
   ChevronLeft,
@@ -41,7 +41,7 @@ export interface SidebarNavProps {
 const defaultNavItems: NavItem[] = [
   { label: 'Dashboard', href: '/app', icon: LayoutDashboard },
   { label: 'Projects', href: '/app/projects', icon: FolderKanban },
-  { label: 'Widgets', href: '/app/widgets', icon: Widget },
+  { label: 'Widgets', href: '/app/widgets', icon: LayoutGrid },
   { label: 'Integrations', href: '/app/integrations', icon: Plug },
   { label: 'Settings', href: '/app/settings', icon: Settings },
 ];

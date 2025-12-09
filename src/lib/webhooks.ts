@@ -111,7 +111,7 @@ export function verifyStripeSignature(
  */
 export async function verifyAppStoreSignature(
   signedPayload: string,
-  rootCertificate: string
+  _rootCertificate: string // Reserved for production certificate chain validation
 ): Promise<{ valid: boolean; payload: unknown }> {
   try {
     // App Store notifications use JWS format

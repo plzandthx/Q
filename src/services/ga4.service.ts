@@ -5,8 +5,7 @@
 
 import { prisma } from '../lib/prisma.js';
 import { logger } from '../lib/logger.js';
-import { ValidationError } from '../lib/errors.js';
-import { InboundEventStatus, InboundSourceType } from '@prisma/client';
+import type { InboundEventStatus, InboundSourceType } from '@prisma/client';
 
 // GA4 Event structure from BigQuery export or Data API
 export interface GA4Event {
@@ -121,8 +120,9 @@ function normalizeScore(
 
 /**
  * Parse GA4 timestamp (microseconds since epoch)
+ * Reserved for future use in direct GA4 timestamp parsing
  */
-function parseGA4Timestamp(timestamp: string): Date {
+function _parseGA4Timestamp(timestamp: string): Date {
   const microseconds = parseInt(timestamp, 10);
   return new Date(microseconds / 1000);
 }

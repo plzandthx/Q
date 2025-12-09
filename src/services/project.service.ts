@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '../lib/prisma.js';
-import { NotFoundError, ForbiddenError, ValidationError } from '../lib/errors.js';
+import { NotFoundError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import * as orgService from './organization.service.js';
 import { checkProjectLimit } from './plan.service.js';

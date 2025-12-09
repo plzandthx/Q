@@ -7,8 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyToken, JwtPayload } from '../lib/jwt.js';
 import { validateSession } from '../services/auth.service.js';
 import { UnauthorizedError, ForbiddenError } from '../lib/errors.js';
-import { logger } from '../lib/logger.js';
-import { OrgRole, User } from '@prisma/client';
+import type { OrgRole, User } from '@prisma/client';
 import * as orgService from '../services/organization.service.js';
 
 // Extend Express Request type
@@ -49,7 +48,7 @@ function extractToken(req: Request): string | null {
  */
 export async function requireAuth(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -85,7 +84,7 @@ export async function requireAuth(
  */
 export async function optionalAuth(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -113,8 +112,8 @@ export async function optionalAuth(
  * Require organization membership middleware
  * Must be used after requireAuth
  */
-export function requireOrganization(minRole: OrgRole = OrgRole.VIEWER) {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export function requireOrganization(minRole?: OrgRole) {
+  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.userId) {
         throw new UnauthorizedError('Authentication required');
@@ -144,7 +143,7 @@ export function requireOrganization(minRole: OrgRole = OrgRole.VIEWER) {
  * Require specific roles middleware factory
  */
 export function requireRole(allowedRoles: OrgRole[]) {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.organizationRole) {
         throw new ForbiddenError('Organization context required');

@@ -61,8 +61,9 @@ interface RadioGroupLabeledItemProps
 const RadioGroupLabeledItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
   RadioGroupLabeledItemProps
->(({ className, label, description, id, ...props }, ref) => {
-  const itemId = id || React.useId();
+>(({ label, description, id, ...props }, ref) => {
+  const generatedId = React.useId();
+  const itemId = id ?? generatedId;
 
   return (
     <div className="flex items-start gap-3">

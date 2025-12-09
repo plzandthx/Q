@@ -162,7 +162,7 @@ export default function PricingPage() {
                   <CardContent>
                     <Button
                       className="w-full"
-                      variant={plan.popular ? 'default' : 'outline'}
+                      variant={plan.popular ? 'primary' : 'outline'}
                       asChild
                     >
                       <Link href={plan.href}>{plan.cta}</Link>

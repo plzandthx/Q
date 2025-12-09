@@ -17,9 +17,8 @@ import {
   zendeskWebhookSchema,
   appStoreReviewSchema,
 } from '../schemas/integration.schema.js';
-import { OrgRole, InboundSourceType } from '@prisma/client';
+import type { InboundSourceType } from '@prisma/client';
 import { logger } from '../lib/logger.js';
-import { ValidationError } from '../lib/errors.js';
 
 const router = Router();
 

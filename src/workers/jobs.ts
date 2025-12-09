@@ -3,7 +3,7 @@
  * Register handlers for background job processing
  */
 
-import { registerHandler, JobTypes, type Job } from '../lib/queue.js';
+import { registerHandler, JobTypes } from '../lib/queue.js';
 import { logger } from '../lib/logger.js';
 import * as emailService from '../services/email.service.js';
 
@@ -69,13 +69,13 @@ interface ProcessInboundEventJobData {
 registerHandler<ProcessInboundEventJobData>(
   JobTypes.PROCESS_INBOUND_EVENT,
   async (job) => {
-    const { eventId, integrationId, projectId } = job.data;
+    const { eventId } = job.data;
 
     logger.debug('Processing inbound event', { eventId });
 
     // Import dynamically to avoid circular dependencies
     const { prisma } = await import('../lib/prisma.js');
-    const { InboundEventStatus, InboundSourceType } = await import('@prisma/client');
+    const { InboundEventStatus } = await import('@prisma/client');
 
     const event = await prisma.inboundEvent.findUnique({
       where: { id: eventId },
@@ -150,7 +150,7 @@ interface ExecuteOutboundActionJobData {
 registerHandler<ExecuteOutboundActionJobData>(
   JobTypes.EXECUTE_OUTBOUND_ACTION,
   async (job) => {
-    const { actionId, integrationId } = job.data;
+    const { actionId } = job.data;
 
     logger.debug('Executing outbound action', { actionId });
 
@@ -158,7 +158,6 @@ registerHandler<ExecuteOutboundActionJobData>(
     const {
       OutboundActionStatus,
       IntegrationType,
-      OutboundActionType,
     } = await import('@prisma/client');
 
     const action = await prisma.outboundAction.findUnique({

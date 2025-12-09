@@ -85,7 +85,7 @@ export default function ProjectWidgetsPage() {
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="outline">{widget.type}</Badge>
                         <Badge
-                          variant={widget.status === 'active' ? 'default' : 'secondary'}
+                          variant={widget.status === 'active' ? 'success' : 'secondary'}
                         >
                           {widget.status}
                         </Badge>

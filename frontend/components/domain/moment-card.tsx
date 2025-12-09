@@ -12,16 +12,22 @@ import { Skeleton } from '@/components/ui/skeleton';
  */
 
 export interface MomentCardProps {
-  id: string;
+  id?: string;
   name: string;
   description?: string | null;
   iconEmoji?: string | null;
+  trigger?: string;
   csatScore?: number | null;
+  score?: number | null; // alias for csatScore
   csatTrend?: number | null;
+  trend?: number | null; // alias for csatTrend
   responsesCount?: number;
+  responses?: number; // alias for responsesCount
+  status?: 'active' | 'paused';
   hasIntegrations?: boolean;
   hasWidgets?: boolean;
   personaNames?: string[];
+  actions?: React.ReactNode;
   onClick?: () => void;
   selected?: boolean;
   className?: string;
@@ -31,16 +37,26 @@ const MomentCard: React.FC<MomentCardProps> = ({
   name,
   description,
   iconEmoji,
+  trigger,
   csatScore,
+  score,
   csatTrend,
-  responsesCount = 0,
+  trend,
+  responsesCount,
+  responses,
+  status,
   hasIntegrations = false,
   hasWidgets = false,
   personaNames = [],
+  actions,
   onClick,
   selected = false,
   className,
 }) => {
+  // Support aliases
+  const displayScore = csatScore ?? score;
+  const displayTrend = csatTrend ?? trend;
+  const displayResponses = responsesCount ?? responses ?? 0;
   const getCsatColor = (score: number) => {
     if (score >= 4) return 'text-success';
     if (score >= 3) return 'text-warning';
@@ -83,8 +99,22 @@ const MomentCard: React.FC<MomentCardProps> = ({
             {/* Responses count */}
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <MessageSquare className="h-3 w-3" />
-              {formatCompact(responsesCount)} responses
+              {formatCompact(displayResponses)} responses
             </span>
+
+            {/* Trigger */}
+            {trigger && (
+              <span className="text-xs text-muted-foreground font-mono">
+                {trigger}
+              </span>
+            )}
+
+            {/* Status badge */}
+            {status && (
+              <Badge variant={status === 'active' ? 'success' : 'secondary'} size="sm">
+                {status}
+              </Badge>
+            )}
 
             {/* Integration indicator */}
             {hasIntegrations && (
@@ -119,33 +149,40 @@ const MomentCard: React.FC<MomentCardProps> = ({
           )}
         </div>
 
+        {/* Actions */}
+        {actions && (
+          <div className="flex-shrink-0">
+            {actions}
+          </div>
+        )}
+
         {/* CSAT Score */}
-        {csatScore !== null && csatScore !== undefined && (
+        {displayScore !== null && displayScore !== undefined && (
           <div className="flex-shrink-0 text-right">
             <div
               className={cn(
                 'inline-flex items-center justify-center h-12 w-12 rounded-lg text-lg font-bold',
-                getCsatBgColor(csatScore),
-                getCsatColor(csatScore)
+                getCsatBgColor(displayScore),
+                getCsatColor(displayScore)
               )}
             >
-              {formatScore(csatScore, 1)}
+              {formatScore(displayScore, 1)}
             </div>
-            {csatTrend !== null && csatTrend !== undefined && (
+            {displayTrend !== null && displayTrend !== undefined && (
               <div
                 className={cn(
                   'flex items-center justify-center gap-0.5 text-xs mt-1',
-                  csatTrend > 0 ? 'text-success' : csatTrend < 0 ? 'text-danger' : 'text-muted-foreground'
+                  displayTrend > 0 ? 'text-success' : displayTrend < 0 ? 'text-danger' : 'text-muted-foreground'
                 )}
               >
-                {csatTrend > 0 ? (
+                {displayTrend > 0 ? (
                   <TrendingUp className="h-3 w-3" />
-                ) : csatTrend < 0 ? (
+                ) : displayTrend < 0 ? (
                   <TrendingDown className="h-3 w-3" />
                 ) : null}
                 <span>
-                  {csatTrend > 0 ? '+' : ''}
-                  {formatScore(csatTrend, 1)}
+                  {displayTrend > 0 ? '+' : ''}
+                  {formatScore(displayTrend, 1)}
                 </span>
               </div>
             )}

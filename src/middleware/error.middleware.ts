@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { AppError, isAppError, formatErrorResponse, ValidationError } from '../lib/errors.js';
+import { isAppError, formatErrorResponse, ValidationError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import { isProduction } from '../config/index.js';
 

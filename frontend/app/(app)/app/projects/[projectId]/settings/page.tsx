@@ -170,7 +170,7 @@ export default function ProjectSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Alert variant="destructive">
+            <Alert variant="danger">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 These actions cannot be undone. Please proceed with caution.
@@ -184,7 +184,7 @@ export default function ProjectSettingsPage() {
                   Permanently delete this project and all its data
                 </p>
               </div>
-              <Button variant="destructive">
+              <Button variant="danger">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete Project
               </Button>

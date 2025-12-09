@@ -26,7 +26,7 @@ const projects = [
     responses: 12543,
     responsesTrend: 23,
     moments: 8,
-    status: 'active' as const,
+    status: 'ACTIVE' as const,
   },
   {
     id: '2',
@@ -36,7 +36,7 @@ const projects = [
     responses: 8562,
     responsesTrend: 15,
     moments: 5,
-    status: 'active' as const,
+    status: 'ACTIVE' as const,
   },
   {
     id: '3',
@@ -46,7 +46,7 @@ const projects = [
     responses: 23412,
     responsesTrend: -5,
     moments: 12,
-    status: 'active' as const,
+    status: 'ACTIVE' as const,
   },
   {
     id: '4',
@@ -56,7 +56,7 @@ const projects = [
     responses: 5621,
     responsesTrend: 8,
     moments: 4,
-    status: 'active' as const,
+    status: 'ACTIVE' as const,
   },
   {
     id: '5',
@@ -66,7 +66,7 @@ const projects = [
     responses: 2134,
     responsesTrend: 42,
     moments: 6,
-    status: 'active' as const,
+    status: 'ACTIVE' as const,
   },
   {
     id: '6',
@@ -76,7 +76,7 @@ const projects = [
     responses: 432,
     responsesTrend: -12,
     moments: 3,
-    status: 'inactive' as const,
+    status: 'ARCHIVED' as const,
   },
 ];
 

@@ -7,7 +7,7 @@
  */
 
 import { createTransport, Transporter } from 'nodemailer';
-import { config, isProduction } from '../config/index.js';
+import { config } from '../config/index.js';
 import { logger } from '../lib/logger.js';
 
 // Email templates

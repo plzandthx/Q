@@ -57,14 +57,15 @@ export default function IntegrationsPage() {
       <PageHeader
         title="Integrations"
         description="Connect Q CSAT with your favorite tools and services."
-      >
-        <Button variant="outline" asChild>
-          <Link href="/app/integrations/logs">
-            View Logs
-            <ExternalLink className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </PageHeader>
+        actions={
+          <Button variant="outline" asChild>
+            <Link href="/app/integrations/logs">
+              View Logs
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        }
+      />
 
       <motion.div
         initial="hidden"

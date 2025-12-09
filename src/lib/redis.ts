@@ -4,7 +4,7 @@
  */
 
 import Redis from 'ioredis';
-import { config, isDevelopment } from '../config/index.js';
+import { config } from '../config/index.js';
 import { logger } from './logger.js';
 
 // Lazy-loaded Redis client
@@ -205,7 +205,7 @@ export async function clearFailedLogins(email: string): Promise<void> {
 /**
  * Clear login failures for a specific email and IP combination
  */
-export async function clearLoginFailures(email: string, ip: string): Promise<void> {
+export async function clearLoginFailures(email: string, _ip: string): Promise<void> {
   // Clear both the general and specific keys
   return clearFailedLogins(email);
 }

@@ -26,7 +26,6 @@ const handlers = new Map<string, JobHandler>();
 
 // Queue configuration
 const QUEUE_PREFIX = 'queue:';
-const PROCESSING_PREFIX = 'processing:';
 const DEAD_LETTER_PREFIX = 'dead:';
 const DEFAULT_MAX_ATTEMPTS = 3;
 const PROCESSING_TIMEOUT = 30000; // 30 seconds

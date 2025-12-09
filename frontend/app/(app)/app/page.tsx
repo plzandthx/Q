@@ -220,9 +220,9 @@ export default function DashboardPage() {
                       <Badge
                         variant={
                           alert.type === 'warning'
-                            ? 'destructive'
+                            ? 'warning'
                             : alert.type === 'success'
-                            ? 'default'
+                            ? 'success'
                             : 'secondary'
                         }
                         className="h-fit"

@@ -76,7 +76,7 @@ const getBadgeVariant = (type: string) => {
     case 'fix':
       return 'secondary';
     case 'security':
-      return 'destructive';
+      return 'danger';
     default:
       return 'outline';
   }

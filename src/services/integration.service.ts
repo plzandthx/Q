@@ -6,7 +6,7 @@
 import { prisma } from '../lib/prisma.js';
 import { NotFoundError, ValidationError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
-import { encrypt, decrypt } from '../lib/crypto.js';
+import { encrypt } from '../lib/crypto.js';
 import * as orgService from './organization.service.js';
 import type {
   CreateIntegrationInput,

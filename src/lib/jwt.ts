@@ -4,15 +4,13 @@
  */
 
 import * as jose from 'jose';
-import { config, jwtConfig } from '../config/index.js';
+import { jwtConfig } from '../config/index.js';
 import { UnauthorizedError } from './errors.js';
 
-export interface JwtPayload {
+export interface JwtPayload extends jose.JWTPayload {
   sub: string; // User ID
   email: string;
   sessionId: string;
-  iat?: number;
-  exp?: number;
 }
 
 export interface RefreshPayload {

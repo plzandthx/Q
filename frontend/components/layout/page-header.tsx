@@ -18,10 +18,11 @@ export interface BreadcrumbItem {
 
 export interface PageHeaderProps {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   breadcrumbs?: BreadcrumbItem[];
   backHref?: string;
   actions?: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -31,8 +32,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   breadcrumbs,
   backHref,
   actions,
+  children,
   className,
 }) => {
+  // Support children as an alias for actions
+  const actionContent = actions || children;
   return (
     <div className={cn('space-y-4', className)}>
       {/* Breadcrumbs */}
@@ -81,11 +85,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
           </div>
           {description && (
-            <p className="text-muted-foreground">{description}</p>
+            <div className="text-muted-foreground">{description}</div>
           )}
         </div>
-        {actions && (
-          <div className="flex items-center gap-2 shrink-0">{actions}</div>
+        {actionContent && (
+          <div className="flex items-center gap-2 shrink-0">{actionContent}</div>
         )}
       </div>
     </div>

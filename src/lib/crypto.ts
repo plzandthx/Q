@@ -8,7 +8,7 @@ import { createCipheriv, createDecipheriv, randomBytes, createHash } from 'crypt
 import { config } from '../config/index.js';
 
 // Argon2 configuration based on OWASP recommendations
-const argon2Options: argon2.Options = {
+const argon2Options = {
   type: argon2.argon2id,
   memoryCost: config.ARGON2_MEMORY_COST,
   timeCost: config.ARGON2_TIME_COST,
@@ -85,7 +85,6 @@ function getEncryptionKey(): Buffer {
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
-const AUTH_TAG_LENGTH = 16;
 
 /**
  * Encrypt sensitive data (e.g., integration tokens)

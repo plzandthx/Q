@@ -4,7 +4,7 @@ import {
   MoreHorizontal,
   Users,
   Milestone,
-  Widget,
+  LayoutGrid,
   TrendingUp,
   TrendingDown,
 } from 'lucide-react';
@@ -27,15 +27,21 @@ import { Skeleton } from '@/components/ui/skeleton';
  */
 
 export interface ProjectCardProps {
-  id: string;
+  id?: string;
   name: string;
   description?: string | null;
   status: 'ACTIVE' | 'ARCHIVED';
   csatScore?: number | null;
+  score?: number | null; // alias for csatScore
   csatTrend?: number | null;
+  responses?: number;
+  responsesTrend?: number;
   personaCount?: number;
   momentCount?: number;
+  moments?: number; // alias for momentCount
   widgetCount?: number;
+  href?: string;
+  actions?: React.ReactNode;
   onEdit?: () => void;
   onArchive?: () => void;
   onDelete?: () => void;
@@ -48,15 +54,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   description,
   status,
   csatScore,
+  score,
   csatTrend,
+  responses,
+  responsesTrend,
   personaCount = 0,
-  momentCount = 0,
+  momentCount,
+  moments,
   widgetCount = 0,
+  href,
+  actions,
   onEdit,
   onArchive,
   onDelete,
   className,
 }) => {
+  // Support aliases
+  const displayScore = csatScore ?? score;
+  const displayTrend = csatTrend ?? responsesTrend;
+  const displayMoments = momentCount ?? moments ?? 0;
+  const linkHref = href || (id ? `/app/projects/${id}` : '#');
   const getCsatColor = (score: number) => {
     if (score >= 4) return 'text-success';
     if (score >= 3) return 'text-warning';
@@ -64,8 +81,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   return (
-    <Card variant="interactive" padding="none" className={className}>
-      <Link href={`/app/projects/${id}`} className="block p-6">
+    <Card variant="interactive" padding="none" className={cn('relative', className)}>
+      <Link href={linkHref} className="block p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             {/* Header */}
@@ -89,37 +106,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               </span>
               <span className="flex items-center gap-1">
                 <Milestone className="h-4 w-4" />
-                {momentCount} moments
+                {displayMoments} moments
               </span>
+              {responses !== undefined && (
+                <span className="flex items-center gap-1">
+                  {responses.toLocaleString()} responses
+                </span>
+              )}
               <span className="flex items-center gap-1">
-                <Widget className="h-4 w-4" />
+                <LayoutGrid className="h-4 w-4" />
                 {widgetCount} widgets
               </span>
             </div>
           </div>
 
           {/* CSAT score */}
-          {csatScore !== null && csatScore !== undefined && (
+          {displayScore !== null && displayScore !== undefined && (
             <div className="text-right shrink-0">
-              <div className={cn('text-2xl font-bold', getCsatColor(csatScore))}>
-                {formatScore(csatScore)}
+              <div className={cn('text-2xl font-bold', getCsatColor(displayScore))}>
+                {formatScore(displayScore)}
               </div>
               <div className="text-xs text-muted-foreground">CSAT</div>
-              {csatTrend !== null && csatTrend !== undefined && (
+              {displayTrend !== null && displayTrend !== undefined && (
                 <div
                   className={cn(
                     'flex items-center justify-end gap-0.5 text-xs mt-1',
-                    csatTrend > 0 ? 'text-success' : csatTrend < 0 ? 'text-danger' : 'text-muted-foreground'
+                    displayTrend > 0 ? 'text-success' : displayTrend < 0 ? 'text-danger' : 'text-muted-foreground'
                   )}
                 >
-                  {csatTrend > 0 ? (
+                  {displayTrend > 0 ? (
                     <TrendingUp className="h-3 w-3" />
-                  ) : csatTrend < 0 ? (
+                  ) : displayTrend < 0 ? (
                     <TrendingDown className="h-3 w-3" />
                   ) : null}
                   <span>
-                    {csatTrend > 0 ? '+' : ''}
-                    {formatScore(csatTrend)}
+                    {displayTrend > 0 ? '+' : ''}
+                    {displayTrend}%
                   </span>
                 </div>
               )}
@@ -128,8 +150,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </Link>
 
-      {/* Actions menu */}
-      {(onEdit || onArchive || onDelete) && (
+      {/* Custom actions or default dropdown menu */}
+      {actions ? (
+        <div className="absolute top-4 right-4">
+          {actions}
+        </div>
+      ) : (onEdit || onArchive || onDelete) ? (
         <div className="absolute top-4 right-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -159,7 +185,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      )}
+      ) : null}
     </Card>
   );
 };
