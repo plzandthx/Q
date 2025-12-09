@@ -49,8 +49,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
   // Render icon - handle both ReactNode and LucideIcon component types
   const renderIcon = () => {
     if (!icon) return null;
-    // Check if icon is a component type (function) vs a ReactNode (already rendered)
-    if (typeof icon === 'function') {
+    // Check if icon is a component type (function or forwardRef object) vs a ReactNode (already rendered)
+    if (typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon)) {
       const IconComponent = icon as LucideIcon;
       return <IconComponent className="h-4 w-4" />;
     }
@@ -155,7 +155,7 @@ const CsatMetricCard: React.FC<
   // Render icon - handle both ReactNode and LucideIcon component types
   const renderIcon = () => {
     if (!props.icon) return null;
-    if (typeof props.icon === 'function') {
+    if (typeof props.icon === 'function' || (typeof props.icon === 'object' && props.icon !== null && '$$typeof' in props.icon && 'render' in props.icon)) {
       const IconComponent = props.icon as LucideIcon;
       return <IconComponent className="h-4 w-4" />;
     }

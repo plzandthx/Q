@@ -2,14 +2,16 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
 const signUpSchema = z.object({
@@ -24,16 +26,20 @@ const signUpSchema = z.object({
 
 type SignUpForm = z.infer<typeof signUpSchema>;
 
-export default function SignUpPage() {
+function SignUpFormContent() {
   const searchParams = useSearchParams();
   const plan = searchParams.get('plan');
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      terms: false,
+    },
   });
 
   const onSubmit = async (data: SignUpForm) => {
@@ -161,7 +167,18 @@ export default function SignUpPage() {
           </div>
 
           <div className="flex items-start gap-2">
-            <Checkbox id="terms" className="mt-0.5" {...register('terms')} />
+            <Controller
+              name="terms"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  id="terms"
+                  className="mt-0.5"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
             <label htmlFor="terms" className="text-sm text-neutral-600 cursor-pointer">
               I agree to the{' '}
               <Link
@@ -195,5 +212,29 @@ export default function SignUpPage() {
         </p>
       </motion.div>
     </motion.div>
+  );
+}
+
+function SignUpFormFallback() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-48" />
+      <Skeleton className="h-4 w-64" />
+      <div className="mt-8 space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<SignUpFormFallback />}>
+      <SignUpFormContent />
+    </Suspense>
   );
 }

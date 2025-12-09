@@ -36,7 +36,7 @@ export const Active: Story = {
     responses: 12543,
     responsesTrend: 23,
     moments: 8,
-    status: 'active',
+    status: 'ACTIVE',
     href: '/app/projects/1/overview',
   },
 };
@@ -50,7 +50,7 @@ export const Inactive: Story = {
     responses: 432,
     responsesTrend: -12,
     moments: 3,
-    status: 'inactive',
+    status: 'ARCHIVED',
     href: '/app/projects/2/overview',
   },
 };
@@ -64,7 +64,7 @@ export const HighScore: Story = {
     responses: 2134,
     responsesTrend: 42,
     moments: 6,
-    status: 'active',
+    status: 'ACTIVE',
     href: '/app/projects/3/overview',
   },
 };
@@ -78,7 +78,7 @@ export const WithActions: Story = {
     responses: 12543,
     responsesTrend: 23,
     moments: 8,
-    status: 'active',
+    status: 'ACTIVE',
     href: '/app/projects/1/overview',
     actions: (
       <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -99,7 +99,7 @@ export const GridLayout: Story = {
         responses={12543}
         responsesTrend={23}
         moments={8}
-        status="active"
+        status="ACTIVE"
         href="/app/projects/1/overview"
       />
       <ProjectCard
@@ -109,7 +109,7 @@ export const GridLayout: Story = {
         responses={8562}
         responsesTrend={15}
         moments={5}
-        status="active"
+        status="ACTIVE"
         href="/app/projects/2/overview"
       />
       <ProjectCard
@@ -119,7 +119,7 @@ export const GridLayout: Story = {
         responses={23412}
         responsesTrend={-5}
         moments={12}
-        status="active"
+        status="ACTIVE"
         href="/app/projects/3/overview"
       />
       <ProjectCard
@@ -129,7 +129,7 @@ export const GridLayout: Story = {
         responses={432}
         responsesTrend={-12}
         moments={3}
-        status="inactive"
+        status="ARCHIVED"
         href="/app/projects/4/overview"
       />
     </div>

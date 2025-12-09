@@ -19,12 +19,12 @@ export default function VerifyEmailPage() {
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setState('success');
-      } catch (error) {
+      } catch (_error) {
         setState('error');
       }
     };
 
-    verifyEmail();
+    void verifyEmail();
   }, []);
 
   if (state === 'loading') {
