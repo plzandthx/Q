@@ -11,9 +11,12 @@ import {
   ConflictError,
   NotFoundError,
   ValidationError,
+  RateLimitError,
 } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import { jwtConfig } from '../config/index.js';
+import { sendVerificationEmail, sendPasswordResetEmail } from './email.service.js';
+import { checkLoginRateLimit, incrementLoginFailure, clearLoginFailures } from '../lib/redis.js';
 import type {
   RegisterInput,
   LoginInput,
@@ -212,7 +215,10 @@ export async function register(
     email: result.user.email,
   });
 
-  // TODO: Send email verification email
+  // Send email verification email (async, don't block registration)
+  sendVerificationEmail(result.user.email, result.user.name, emailVerifyToken).catch((err) => {
+    logger.error('Failed to send verification email', { userId: result.user.id }, err as Error);
+  });
 
   return {
     user: {
@@ -237,24 +243,42 @@ export async function login(
   ipAddress?: string,
   userAgent?: string
 ): Promise<{ user: AuthUser; tokens: AuthTokens }> {
+  // Check rate limiting before processing login
+  const rateLimitResult = await checkLoginRateLimit(input.email.toLowerCase(), ipAddress ?? 'unknown');
+  if (!rateLimitResult.allowed) {
+    const retryAfter = Math.ceil(rateLimitResult.retryAfter / 1000);
+    logger.warn('Login rate limited', {
+      email: input.email,
+      ipAddress,
+      retryAfter,
+    });
+    throw new RateLimitError(`Too many login attempts. Please try again in ${retryAfter} seconds.`);
+  }
+
   const user = await prisma.user.findUnique({
     where: { email: input.email.toLowerCase(), deletedAt: null },
   });
 
   if (!user || !user.passwordHash) {
+    // Increment failure counter even for non-existent users (prevent user enumeration)
+    await incrementLoginFailure(input.email.toLowerCase(), ipAddress ?? 'unknown');
     throw new UnauthorizedError('Invalid email or password');
   }
 
   const isValid = await verifyPassword(user.passwordHash, input.password);
 
   if (!isValid) {
-    // TODO: Implement login attempt tracking and rate limiting
+    // Increment failure counter for invalid password
+    await incrementLoginFailure(input.email.toLowerCase(), ipAddress ?? 'unknown');
     logger.warn('Failed login attempt', {
       email: input.email,
       ipAddress,
     });
     throw new UnauthorizedError('Invalid email or password');
   }
+
+  // Clear failure counter on successful login
+  await clearLoginFailures(input.email.toLowerCase(), ipAddress ?? 'unknown');
 
   // Create session
   const { tokens } = await createSession(user.id, ipAddress, userAgent);
@@ -414,7 +438,10 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<void> 
     },
   });
 
-  // TODO: Send password reset email with resetToken
+  // Send password reset email (async, don't block response)
+  sendPasswordResetEmail(user.email, user.name, resetToken).catch((err) => {
+    logger.error('Failed to send password reset email', { userId: user.id }, err as Error);
+  });
 
   logger.info('Password reset requested', { userId: user.id });
 }
@@ -538,7 +565,8 @@ export async function validateSession(
 
 /**
  * Handle Google OAuth callback
- * TODO: Implement full Google OAuth flow
+ * Full OAuth flow is implemented in oauth.service.ts (getGoogleAuthUrl, completeGoogleAuth)
+ * This function handles the user creation/linking after OAuth verification
  */
 export async function handleGoogleAuth(
   googleId: string,

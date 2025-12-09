@@ -74,6 +74,7 @@ export interface RateLimitResult {
   remaining: number;
   resetAt: number;
   total: number;
+  retryAfter: number; // milliseconds until retry is allowed
 }
 
 /**
@@ -109,23 +110,25 @@ export async function checkRateLimit(
 
     if (!results) {
       // Redis unavailable, allow request
-      return { allowed: true, remaining: limit, resetAt: now + windowMs, total: limit };
+      return { allowed: true, remaining: limit, resetAt: now + windowMs, total: limit, retryAfter: 0 };
     }
 
     const count = results[1]?.[1] as number ?? 0;
     const allowed = count < limit;
     const remaining = Math.max(0, limit - count - 1);
+    const retryAfter = allowed ? 0 : windowMs;
 
     return {
       allowed,
       remaining,
       resetAt: now + windowMs,
       total: limit,
+      retryAfter,
     };
   } catch (error) {
     logger.error('Rate limit check failed', { key }, error as Error);
     // On error, allow the request
-    return { allowed: true, remaining: limit, resetAt: now + windowMs, total: limit };
+    return { allowed: true, remaining: limit, resetAt: now + windowMs, total: limit, retryAfter: 0 };
   }
 }
 
@@ -163,6 +166,13 @@ export async function recordFailedLogin(email: string, ip: string): Promise<void
 }
 
 /**
+ * Increment login failure counter (alias for recordFailedLogin with combined key)
+ */
+export async function incrementLoginFailure(email: string, ip: string): Promise<void> {
+  return recordFailedLogin(email, ip);
+}
+
+/**
  * Get failed login count for a user
  */
 export async function getFailedLoginCount(email: string, windowMs: number): Promise<number> {
@@ -190,6 +200,14 @@ export async function clearFailedLogins(email: string): Promise<void> {
   } catch (error) {
     logger.error('Failed to clear login failures', { email }, error as Error);
   }
+}
+
+/**
+ * Clear login failures for a specific email and IP combination
+ */
+export async function clearLoginFailures(email: string, ip: string): Promise<void> {
+  // Clear both the general and specific keys
+  return clearFailedLogins(email);
 }
 
 /**

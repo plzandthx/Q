@@ -7,6 +7,7 @@ import { prisma } from '../lib/prisma.js';
 import { NotFoundError, ForbiddenError, ValidationError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import * as orgService from './organization.service.js';
+import { checkProjectLimit } from './plan.service.js';
 import type {
   CreateProjectInput,
   UpdateProjectInput,
@@ -203,7 +204,8 @@ export async function createProject(
 ): Promise<ProjectDetail> {
   await orgService.requireRole(orgId, userId, OrgRole.MEMBER);
 
-  // TODO: Check plan limits
+  // Check plan limits
+  await checkProjectLimit(orgId);
 
   const project = await prisma.project.create({
     data: {

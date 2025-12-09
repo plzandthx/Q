@@ -8,6 +8,8 @@ import { NotFoundError, ValidationError, RateLimitError } from '../lib/errors.js
 import { logger } from '../lib/logger.js';
 import { generateWidgetPublicKey, hashRespondentId } from '../lib/crypto.js';
 import * as orgService from './organization.service.js';
+import { checkWidgetLimit, checkResponseLimit } from './plan.service.js';
+import { checkWidgetRateLimit } from '../lib/redis.js';
 import type {
   CreateWidgetInput,
   UpdateWidgetInput,
@@ -190,7 +192,8 @@ export async function createWidget(
     throw new NotFoundError('Project');
   }
 
-  // TODO: Check plan widget limits
+  // Check plan widget limits
+  await checkWidgetLimit(orgId);
 
   const publicKey = generateWidgetPublicKey();
 
@@ -332,20 +335,26 @@ export async function submitCsatResponse(
     throw new NotFoundError('Widget');
   }
 
-  // TODO: Implement rate limiting per IP / respondent
-  // For now, basic check to prevent spam
-  if (input.respondentId) {
-    const recentSubmission = await prisma.csatResponse.findFirst({
-      where: {
-        widgetId: widget.id,
-        respondentIdentifierHash: hashRespondentId(input.respondentId, widget.projectId),
-        createdAt: { gt: new Date(Date.now() - 60000) }, // Last minute
-      },
-    });
+  // Get organization ID for checking response limits
+  const project = await prisma.project.findUnique({
+    where: { id: widget.projectId },
+    select: { organizationId: true },
+  });
 
-    if (recentSubmission) {
-      throw new RateLimitError('Please wait before submitting another response');
-    }
+  if (project) {
+    // Check monthly response limit
+    await checkResponseLimit(project.organizationId);
+  }
+
+  // Rate limiting per IP / respondent using Redis
+  const rateLimitKey = input.respondentId
+    ? `respondent:${hashRespondentId(input.respondentId, widget.projectId)}`
+    : `ip:${ipAddress ?? 'unknown'}`;
+
+  const rateLimitResult = await checkWidgetRateLimit(widget.id, rateLimitKey);
+  if (!rateLimitResult.allowed) {
+    const retryAfter = Math.ceil(rateLimitResult.retryAfter / 1000);
+    throw new RateLimitError(`Please wait ${retryAfter} seconds before submitting another response`);
   }
 
   // Validate moment and persona if provided

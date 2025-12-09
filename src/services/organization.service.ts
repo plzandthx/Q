@@ -10,13 +10,16 @@ import {
   ForbiddenError,
 } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
+import { generateToken } from '../lib/crypto.js';
+import { sendInvitationEmail } from './email.service.js';
+import { checkUserLimit } from './plan.service.js';
 import type {
   CreateOrganizationInput,
   UpdateOrganizationInput,
   InviteMemberInput,
   UpdateMemberRoleInput,
 } from '../schemas/organization.schema.js';
-import { OrgRole } from '@prisma/client';
+import { OrgRole, InvitationStatus } from '@prisma/client';
 
 export interface OrganizationWithMembership {
   id: string;
@@ -434,19 +437,27 @@ export async function getMembers(
 
 /**
  * Invite member to organization
- * TODO: Implement actual email invitation flow
+ * Supports both existing users (instant add) and new users (pending invitation)
  */
 export async function inviteMember(
   orgId: string,
   userId: string,
   input: InviteMemberInput
-): Promise<MemberInfo> {
+): Promise<MemberInfo | { pendingInvitation: true; email: string; expiresAt: Date }> {
   // Check permission
   const membership = await prisma.orgMembership.findUnique({
     where: {
       organizationId_userId: {
         organizationId: orgId,
         userId,
+      },
+    },
+    include: {
+      organization: {
+        select: { name: true },
+      },
+      user: {
+        select: { name: true },
       },
     },
   });
@@ -464,14 +475,70 @@ export async function inviteMember(
     throw new ForbiddenError('Cannot invite with owner role');
   }
 
+  // Check plan user limits
+  await checkUserLimit(orgId);
+
   // Check if user exists
   const invitedUser = await prisma.user.findUnique({
     where: { email: input.email.toLowerCase() },
   });
 
   if (!invitedUser) {
-    // TODO: Create pending invitation and send email
-    throw new NotFoundError('User with this email not found. Invitation system pending implementation.');
+    // Check for existing pending invitation
+    const existingInvitation = await prisma.pendingInvitation.findFirst({
+      where: {
+        organizationId: orgId,
+        email: input.email.toLowerCase(),
+        status: InvitationStatus.PENDING,
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    if (existingInvitation) {
+      throw new ConflictError('An invitation has already been sent to this email');
+    }
+
+    // Create pending invitation
+    const invitationToken = generateToken();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    await prisma.pendingInvitation.create({
+      data: {
+        organizationId: orgId,
+        email: input.email.toLowerCase(),
+        role: input.role,
+        token: invitationToken,
+        invitedById: userId,
+        expiresAt,
+      },
+    });
+
+    // Send invitation email
+    sendInvitationEmail(
+      input.email.toLowerCase(),
+      membership.user.name,
+      membership.organization.name,
+      input.role,
+      invitationToken
+    ).catch((err) => {
+      logger.error('Failed to send invitation email', {
+        email: input.email,
+        organizationId: orgId,
+      }, err as Error);
+    });
+
+    logger.info('Pending invitation created', {
+      organizationId: orgId,
+      email: input.email.toLowerCase(),
+      role: input.role,
+      invitedBy: userId,
+    });
+
+    return {
+      pendingInvitation: true,
+      email: input.email.toLowerCase(),
+      expiresAt,
+    };
   }
 
   // Check if already a member
@@ -488,7 +555,7 @@ export async function inviteMember(
     throw new ConflictError('User is already a member of this organization');
   }
 
-  // Add member
+  // Add member directly (user exists)
   const newMembership = await prisma.orgMembership.create({
     data: {
       organizationId: orgId,
@@ -507,6 +574,20 @@ export async function inviteMember(
     },
   });
 
+  // Notify user of being added
+  sendInvitationEmail(
+    invitedUser.email,
+    membership.user.name,
+    membership.organization.name,
+    input.role,
+    '' // No token needed for existing users
+  ).catch((err) => {
+    logger.error('Failed to send membership notification', {
+      userId: invitedUser.id,
+      organizationId: orgId,
+    }, err as Error);
+  });
+
   logger.info('Member added to organization', {
     organizationId: orgId,
     userId: invitedUser.id,
@@ -523,6 +604,209 @@ export async function inviteMember(
     role: newMembership.role,
     joinedAt: newMembership.createdAt,
   };
+}
+
+/**
+ * Accept a pending invitation
+ */
+export async function acceptInvitation(
+  token: string,
+  userId: string
+): Promise<MemberInfo> {
+  const invitation = await prisma.pendingInvitation.findUnique({
+    where: { token },
+    include: { organization: true },
+  });
+
+  if (!invitation) {
+    throw new NotFoundError('Invitation');
+  }
+
+  if (invitation.status !== InvitationStatus.PENDING) {
+    throw new ForbiddenError('Invitation has already been used or revoked');
+  }
+
+  if (invitation.expiresAt < new Date()) {
+    await prisma.pendingInvitation.update({
+      where: { id: invitation.id },
+      data: { status: InvitationStatus.EXPIRED },
+    });
+    throw new ForbiddenError('Invitation has expired');
+  }
+
+  // Get the user
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new NotFoundError('User');
+  }
+
+  // Verify email matches invitation
+  if (user.email.toLowerCase() !== invitation.email.toLowerCase()) {
+    throw new ForbiddenError('This invitation was sent to a different email address');
+  }
+
+  // Check if already a member
+  const existingMembership = await prisma.orgMembership.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId: invitation.organizationId,
+        userId,
+      },
+    },
+  });
+
+  if (existingMembership) {
+    throw new ConflictError('You are already a member of this organization');
+  }
+
+  // Create membership and update invitation in transaction
+  const newMembership = await prisma.$transaction(async (tx) => {
+    await tx.pendingInvitation.update({
+      where: { id: invitation.id },
+      data: { status: InvitationStatus.ACCEPTED },
+    });
+
+    return tx.orgMembership.create({
+      data: {
+        organizationId: invitation.organizationId,
+        userId,
+        role: invitation.role,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+  });
+
+  logger.info('Invitation accepted', {
+    organizationId: invitation.organizationId,
+    userId,
+    invitationId: invitation.id,
+  });
+
+  return {
+    id: newMembership.id,
+    userId: newMembership.user.id,
+    email: newMembership.user.email,
+    name: newMembership.user.name,
+    avatarUrl: newMembership.user.avatarUrl,
+    role: newMembership.role,
+    joinedAt: newMembership.createdAt,
+  };
+}
+
+/**
+ * Get pending invitations for an organization
+ */
+export async function getPendingInvitations(
+  orgId: string,
+  userId: string
+): Promise<Array<{
+  id: string;
+  email: string;
+  role: OrgRole;
+  invitedBy: string;
+  expiresAt: Date;
+  createdAt: Date;
+}>> {
+  const membership = await prisma.orgMembership.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId: orgId,
+        userId,
+      },
+    },
+  });
+
+  if (!membership) {
+    throw new NotFoundError('Organization');
+  }
+
+  if (!hasPermission(membership.role, OrgRole.ADMIN)) {
+    throw new ForbiddenError('Only admins can view pending invitations');
+  }
+
+  const invitations = await prisma.pendingInvitation.findMany({
+    where: {
+      organizationId: orgId,
+      status: InvitationStatus.PENDING,
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      invitedBy: {
+        select: { name: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return invitations.map((inv) => ({
+    id: inv.id,
+    email: inv.email,
+    role: inv.role,
+    invitedBy: inv.invitedBy.name,
+    expiresAt: inv.expiresAt,
+    createdAt: inv.createdAt,
+  }));
+}
+
+/**
+ * Revoke a pending invitation
+ */
+export async function revokeInvitation(
+  orgId: string,
+  invitationId: string,
+  userId: string
+): Promise<void> {
+  const membership = await prisma.orgMembership.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId: orgId,
+        userId,
+      },
+    },
+  });
+
+  if (!membership) {
+    throw new NotFoundError('Organization');
+  }
+
+  if (!hasPermission(membership.role, OrgRole.ADMIN)) {
+    throw new ForbiddenError('Only admins can revoke invitations');
+  }
+
+  const invitation = await prisma.pendingInvitation.findFirst({
+    where: {
+      id: invitationId,
+      organizationId: orgId,
+      status: InvitationStatus.PENDING,
+    },
+  });
+
+  if (!invitation) {
+    throw new NotFoundError('Invitation');
+  }
+
+  await prisma.pendingInvitation.update({
+    where: { id: invitationId },
+    data: { status: InvitationStatus.REVOKED },
+  });
+
+  logger.info('Invitation revoked', {
+    organizationId: orgId,
+    invitationId,
+    revokedBy: userId,
+  });
 }
 
 /**
