@@ -141,19 +141,21 @@ async function main(): Promise<void> {
     },
   });
 
-  await prisma.subscription.upsert({
-    where: {
-      id: `sub-${demoOrg.id}`,
-    },
-    update: {},
-    create: {
-      id: `sub-${demoOrg.id}`,
-      organizationId: demoOrg.id,
-      planId: growthPlan.id,
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    },
+  // Create subscription - use organizationId for lookup since id must be UUID
+  const existingSubscription = await prisma.subscription.findFirst({
+    where: { organizationId: demoOrg.id },
   });
+
+  if (!existingSubscription) {
+    await prisma.subscription.create({
+      data: {
+        organizationId: demoOrg.id,
+        planId: growthPlan.id,
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  }
 
   console.log(`✅ Created demo user: ${demoUser.email}`);
   console.log(`✅ Created demo organization: ${demoOrg.name}`);
