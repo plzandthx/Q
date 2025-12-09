@@ -1,0 +1,750 @@
+// Q CSAT Dashboard - Prisma Schema
+// Multi-tenant, enterprise-ready SaaS database schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum AuthProvider {
+  PASSWORD
+  GOOGLE
+  SSO_FUTURE
+}
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+enum BillingInterval {
+  MONTHLY
+  ANNUAL
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum WidgetType {
+  MODAL_CAPTURE
+  TOAST
+  INLINE_EMBED
+}
+
+enum IntegrationType {
+  ZENDESK
+  GA4
+  APP_STORE
+  PLAY_STORE
+  TABLEAU
+  JIRA
+  ASANA
+  MONDAY
+  AIRTABLE
+  WRIKE
+}
+
+enum IntegrationDirection {
+  INBOUND
+  OUTBOUND
+  BOTH
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  PENDING
+}
+
+enum ConnectionAuthType {
+  OAUTH2
+  API_KEY
+}
+
+enum InboundEventStatus {
+  RECEIVED
+  PROCESSED
+  ERROR
+}
+
+enum InboundSourceType {
+  ZENDESK_TICKET
+  ZENDESK_SATISFACTION
+  APP_STORE_REVIEW
+  PLAY_STORE_REVIEW
+  GA4_EVENT
+  TABLEAU_DATA
+  WIDGET_SUBMISSION
+}
+
+enum OutboundActionType {
+  CREATE_TASK
+  UPDATE_TASK
+  CREATE_COMMENT
+  SYNC_STATUS
+}
+
+enum OutboundActionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  RETRYING
+}
+
+enum RecommendationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RecommendationStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+  ARCHIVED
+}
+
+enum RecommendationSource {
+  RULE
+  MANUAL
+  AI_FUTURE
+}
+
+enum AlertType {
+  CSAT_DROP
+  CSAT_SPIKE
+  INTEGRATION_DOWN
+  LOW_RESPONSE_VOLUME
+  THRESHOLD_BREACH
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+// ============================================================================
+// IDENTITY & MULTI-TENANCY
+// ============================================================================
+
+model Organization {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  slug      String   @unique @db.VarChar(100)
+  logoUrl   String?  @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // Relations
+  memberships     OrgMembership[]
+  projects        Project[]
+  integrations    Integration[]
+  subscriptions   Subscription[]
+  apiKeys         ApiKey[]
+  auditLogs       AuditLog[]
+
+  @@index([slug])
+  @@index([deletedAt])
+  @@map("organizations")
+}
+
+model User {
+  id             String       @id @default(uuid()) @db.Uuid
+  email          String       @unique @db.VarChar(255)
+  name           String       @db.VarChar(255)
+  avatarUrl      String?      @db.VarChar(500)
+  authProvider   AuthProvider @default(PASSWORD) @map("auth_provider")
+  passwordHash   String?      @map("password_hash") @db.VarChar(255)
+  googleId       String?      @unique @map("google_id") @db.VarChar(255)
+  emailVerified  Boolean      @default(false) @map("email_verified")
+  emailVerifyToken String?    @map("email_verify_token") @db.VarChar(255)
+  passwordResetToken String?  @map("password_reset_token") @db.VarChar(255)
+  passwordResetExpires DateTime? @map("password_reset_expires")
+  mfaEnabled     Boolean      @default(false) @map("mfa_enabled")
+  mfaSecret      String?      @map("mfa_secret") @db.VarChar(255)
+  lastLoginAt    DateTime?    @map("last_login_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  deletedAt      DateTime?    @map("deleted_at")
+
+  // Relations
+  memberships      OrgMembership[]
+  createdProjects  Project[]       @relation("CreatedByUser")
+  auditLogs        AuditLog[]
+  recommendations  Recommendation[] @relation("GeneratedByUser")
+  sessions         Session[]
+
+  @@index([email])
+  @@index([googleId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  tokenHash    String   @map("token_hash") @db.VarChar(255)
+  userAgent    String?  @map("user_agent") @db.VarChar(500)
+  ipAddress    String?  @map("ip_address") @db.VarChar(45)
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model OrgMembership {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  role           OrgRole  @default(MEMBER)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("org_memberships")
+}
+
+// ============================================================================
+// BILLING & SUBSCRIPTIONS
+// ============================================================================
+
+model Plan {
+  id                 String   @id @default(uuid()) @db.Uuid
+  name               String   @db.VarChar(100)
+  slug               String   @unique @db.VarChar(50)
+  description        String?  @db.Text
+  monthlyPriceCents  Int      @map("monthly_price_cents")
+  annualPriceCents   Int      @map("annual_price_cents")
+  projectsLimit      Int      @map("projects_limit")
+  usersLimit         Int      @map("users_limit")
+  integrationsLimit  Int      @map("integrations_limit")
+  widgetsLimit       Int      @map("widgets_limit")
+  responsesPerMonth  Int      @map("responses_per_month")
+  featuresJson       Json     @default("{}") @map("features_json")
+  isActive           Boolean  @default(true) @map("is_active")
+  sortOrder          Int      @default(0) @map("sort_order")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  subscriptions Subscription[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@map("plans")
+}
+
+model Subscription {
+  id                   String             @id @default(uuid()) @db.Uuid
+  organizationId       String             @map("organization_id") @db.Uuid
+  planId               String             @map("plan_id") @db.Uuid
+  stripeCustomerId     String?            @map("stripe_customer_id") @db.VarChar(255)
+  stripeSubscriptionId String?            @map("stripe_subscription_id") @db.VarChar(255)
+  status               SubscriptionStatus @default(TRIALING)
+  billingInterval      BillingInterval    @default(MONTHLY) @map("billing_interval")
+  currentPeriodStart   DateTime           @map("current_period_start")
+  currentPeriodEnd     DateTime           @map("current_period_end")
+  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  trialEndsAt          DateTime?          @map("trial_ends_at")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  plan         Plan         @relation(fields: [planId], references: [id])
+
+  @@index([organizationId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+// ============================================================================
+// API KEYS & AUDIT
+// ============================================================================
+
+model ApiKey {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  name           String    @db.VarChar(255)
+  keyPrefix      String    @map("key_prefix") @db.VarChar(10)
+  keyHash        String    @map("key_hash") @db.VarChar(255)
+  scopes         String[]  @default([])
+  lastUsedAt     DateTime? @map("last_used_at")
+  expiresAt      DateTime? @map("expires_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  revokedAt      DateTime? @map("revoked_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([keyPrefix])
+  @@index([revokedAt])
+  @@map("api_keys")
+}
+
+model AuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  action         String   @db.VarChar(100)
+  resourceType   String   @map("resource_type") @db.VarChar(100)
+  resourceId     String?  @map("resource_id") @db.Uuid
+  metadataJson   Json     @default("{}") @map("metadata_json")
+  ipAddress      String?  @map("ip_address") @db.VarChar(45)
+  userAgent      String?  @map("user_agent") @db.VarChar(500)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([action])
+  @@index([resourceType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================================================
+// PRODUCT MODEL: PROJECTS, PERSONAS, MOMENTS
+// ============================================================================
+
+model Project {
+  id              String        @id @default(uuid()) @db.Uuid
+  organizationId  String        @map("organization_id") @db.Uuid
+  name            String        @db.VarChar(255)
+  description     String?       @db.Text
+  status          ProjectStatus @default(ACTIVE)
+  iconUrl         String?       @map("icon_url") @db.VarChar(500)
+  createdByUserId String?       @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
+
+  // Relations
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy           User?                 @relation("CreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  personas            Persona[]
+  moments             Moment[]
+  widgets             CsatWidget[]
+  responses           CsatResponse[]
+  aggregates          CsatAggregate[]
+  projectIntegrations ProjectIntegration[]
+  inboundEvents       InboundEvent[]
+  outboundActions     OutboundAction[]
+  recommendations     Recommendation[]
+  alerts              Alert[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("projects")
+}
+
+model Persona {
+  id          String   @id @default(uuid()) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  avatarUrl   String?  @map("avatar_url") @db.VarChar(500)
+  attributes  Json     @default("{}") // Flexible attributes for segmentation
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  // Relations
+  project         Project[]
+  momentPersonas  MomentPersona[]
+  responses       CsatResponse[]
+  aggregates      CsatAggregate[]
+  recommendations Recommendation[]
+
+  @@index([projectId])
+  @@index([deletedAt])
+  @@map("personas")
+}
+
+model Moment {
+  id          String   @id @default(uuid()) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  orderIndex  Int      @default(0) @map("order_index")
+  iconEmoji   String?  @map("icon_emoji") @db.VarChar(10)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  // Relations
+  project             Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  momentPersonas      MomentPersona[]
+  responses           CsatResponse[]
+  aggregates          CsatAggregate[]
+  projectIntegrations ProjectIntegration[]
+  inboundEvents       InboundEvent[]
+  outboundActions     OutboundAction[]
+  recommendations     Recommendation[]
+  alerts              Alert[]
+
+  @@index([projectId])
+  @@index([orderIndex])
+  @@index([deletedAt])
+  @@map("moments")
+}
+
+model MomentPersona {
+  id        String   @id @default(uuid()) @db.Uuid
+  momentId  String   @map("moment_id") @db.Uuid
+  personaId String   @map("persona_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  moment  Moment  @relation(fields: [momentId], references: [id], onDelete: Cascade)
+  persona Persona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@unique([momentId, personaId])
+  @@index([momentId])
+  @@index([personaId])
+  @@map("moment_personas")
+}
+
+// ============================================================================
+// CSAT WIDGETS & RESPONSES
+// ============================================================================
+
+model CsatWidget {
+  id         String     @id @default(uuid()) @db.Uuid
+  projectId  String     @map("project_id") @db.Uuid
+  type       WidgetType
+  name       String     @db.VarChar(255)
+  publicKey  String     @unique @map("public_key") @db.VarChar(50)
+  configJson Json       @default("{}") @map("config_json")
+  // configJson includes: theme, triggers, questions, copy, redirectUrl, thankYouMessage
+  isActive   Boolean    @default(true) @map("is_active")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  deletedAt  DateTime?  @map("deleted_at")
+
+  // Relations
+  project   Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  responses CsatResponse[]
+
+  @@index([projectId])
+  @@index([publicKey])
+  @@index([isActive])
+  @@index([deletedAt])
+  @@map("csat_widgets")
+}
+
+model CsatResponse {
+  id                       String            @id @default(uuid()) @db.Uuid
+  projectId                String            @map("project_id") @db.Uuid
+  momentId                 String?           @map("moment_id") @db.Uuid
+  personaId                String?           @map("persona_id") @db.Uuid
+  widgetId                 String?           @map("widget_id") @db.Uuid
+  integrationId            String?           @map("integration_id") @db.Uuid
+  inboundEventId           String?           @map("inbound_event_id") @db.Uuid
+  externalReference        String?           @map("external_reference") @db.VarChar(500)
+  score                    Int               // 1-5 scale
+  comment                  String?           @db.Text
+  metadataJson             Json              @default("{}") @map("metadata_json")
+  respondentIdentifierHash String?           @map("respondent_identifier_hash") @db.VarChar(255)
+  sourceType               InboundSourceType @default(WIDGET_SUBMISSION) @map("source_type")
+  createdAt                DateTime          @default(now()) @map("created_at")
+
+  // Relations
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment        Moment?        @relation(fields: [momentId], references: [id], onDelete: SetNull)
+  persona       Persona?       @relation(fields: [personaId], references: [id], onDelete: SetNull)
+  widget        CsatWidget?    @relation(fields: [widgetId], references: [id], onDelete: SetNull)
+  integration   Integration?   @relation(fields: [integrationId], references: [id], onDelete: SetNull)
+  inboundEvent  InboundEvent?  @relation(fields: [inboundEventId], references: [id], onDelete: SetNull)
+  outboundActions OutboundAction[]
+
+  @@index([projectId])
+  @@index([momentId])
+  @@index([personaId])
+  @@index([widgetId])
+  @@index([integrationId])
+  @@index([createdAt])
+  @@index([score])
+  @@map("csat_responses")
+}
+
+model CsatAggregate {
+  id             String    @id @default(uuid()) @db.Uuid
+  projectId      String    @map("project_id") @db.Uuid
+  momentId       String?   @map("moment_id") @db.Uuid
+  personaId      String?   @map("persona_id") @db.Uuid
+  timeBucket     DateTime  @map("time_bucket") @db.Date
+  granularity    String    @default("daily") @db.VarChar(20) // daily, weekly, monthly
+  responsesCount Int       @map("responses_count")
+  avgScore       Float     @map("avg_score")
+  minScore       Int       @map("min_score")
+  maxScore       Int       @map("max_score")
+  p50Score       Float     @map("p50_score")
+  p90Score       Float     @map("p90_score")
+  promoters      Int       @default(0) // Score 4-5
+  passives       Int       @default(0) // Score 3
+  detractors     Int       @default(0) // Score 1-2
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment  Moment?  @relation(fields: [momentId], references: [id], onDelete: Cascade)
+  persona Persona? @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, momentId, personaId, timeBucket, granularity])
+  @@index([projectId])
+  @@index([momentId])
+  @@index([personaId])
+  @@index([timeBucket])
+  @@map("csat_aggregates")
+}
+
+// ============================================================================
+// INTEGRATIONS
+// ============================================================================
+
+model Integration {
+  id             String               @id @default(uuid()) @db.Uuid
+  organizationId String               @map("organization_id") @db.Uuid
+  type           IntegrationType
+  direction      IntegrationDirection
+  displayName    String               @map("display_name") @db.VarChar(255)
+  description    String?              @db.Text
+  iconUrl        String?              @map("icon_url") @db.VarChar(500)
+  isEnabled      Boolean              @default(true) @map("is_enabled")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+  deletedAt      DateTime?            @map("deleted_at")
+
+  // Relations
+  organization        Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  connections         IntegrationConnection[]
+  projectIntegrations ProjectIntegration[]
+  inboundEvents       InboundEvent[]
+  outboundActions     OutboundAction[]
+  responses           CsatResponse[]
+
+  @@index([organizationId])
+  @@index([type])
+  @@index([direction])
+  @@index([deletedAt])
+  @@map("integrations")
+}
+
+model IntegrationConnection {
+  id                    String           @id @default(uuid()) @db.Uuid
+  integrationId         String           @map("integration_id") @db.Uuid
+  status                ConnectionStatus @default(PENDING)
+  authType              ConnectionAuthType @map("auth_type")
+  accessTokenEncrypted  String?          @map("access_token_encrypted") @db.Text
+  refreshTokenEncrypted String?          @map("refresh_token_encrypted") @db.Text
+  expiresAt             DateTime?        @map("expires_at")
+  lastSyncedAt          DateTime?        @map("last_synced_at")
+  lastErrorAt           DateTime?        @map("last_error_at")
+  errorMessage          String?          @map("error_message") @db.Text
+  errorCount            Int              @default(0) @map("error_count")
+  configJson            Json             @default("{}") @map("config_json")
+  // configJson can include: workspace, project, board, channel, etc.
+  webhookSecret         String?          @map("webhook_secret") @db.VarChar(255)
+  createdAt             DateTime         @default(now()) @map("created_at")
+  updatedAt             DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId])
+  @@index([status])
+  @@map("integration_connections")
+}
+
+model ProjectIntegration {
+  id            String   @id @default(uuid()) @db.Uuid
+  projectId     String   @map("project_id") @db.Uuid
+  integrationId String   @map("integration_id") @db.Uuid
+  momentId      String?  @map("moment_id") @db.Uuid
+  settingsJson  Json     @default("{}") @map("settings_json")
+  // settingsJson includes: mappings, filters, auto-create settings
+  isEnabled     Boolean  @default(true) @map("is_enabled")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  moment      Moment?     @relation(fields: [momentId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, integrationId, momentId])
+  @@index([projectId])
+  @@index([integrationId])
+  @@index([momentId])
+  @@map("project_integrations")
+}
+
+// ============================================================================
+// INBOUND & OUTBOUND EVENTS
+// ============================================================================
+
+model InboundEvent {
+  id              String             @id @default(uuid()) @db.Uuid
+  integrationId   String             @map("integration_id") @db.Uuid
+  projectId       String             @map("project_id") @db.Uuid
+  momentId        String?            @map("moment_id") @db.Uuid
+  externalId      String             @map("external_id") @db.VarChar(500)
+  sourceType      InboundSourceType  @map("source_type")
+  payloadJson     Json               @map("payload_json")
+  normalizedScore Int?               @map("normalized_score")
+  status          InboundEventStatus @default(RECEIVED)
+  errorMessage    String?            @map("error_message") @db.Text
+  processedAt     DateTime?          @map("processed_at")
+  receivedAt      DateTime           @default(now()) @map("received_at")
+
+  // Relations
+  integration   Integration    @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment        Moment?        @relation(fields: [momentId], references: [id], onDelete: SetNull)
+  csatResponses CsatResponse[]
+
+  @@index([integrationId])
+  @@index([projectId])
+  @@index([momentId])
+  @@index([externalId])
+  @@index([status])
+  @@index([receivedAt])
+  @@map("inbound_events")
+}
+
+model OutboundAction {
+  id               String               @id @default(uuid()) @db.Uuid
+  integrationId    String               @map("integration_id") @db.Uuid
+  projectId        String               @map("project_id") @db.Uuid
+  momentId         String?              @map("moment_id") @db.Uuid
+  csatResponseId   String?              @map("csat_response_id") @db.Uuid
+  recommendationId String?              @map("recommendation_id") @db.Uuid
+  externalItemId   String?              @map("external_item_id") @db.VarChar(500)
+  actionType       OutboundActionType   @map("action_type")
+  payloadJson      Json                 @map("payload_json")
+  status           OutboundActionStatus @default(PENDING)
+  errorMessage     String?              @map("error_message") @db.Text
+  attemptCount     Int                  @default(0) @map("attempt_count")
+  lastAttemptAt    DateTime?            @map("last_attempt_at")
+  completedAt      DateTime?            @map("completed_at")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+
+  // Relations
+  integration    Integration     @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment         Moment?         @relation(fields: [momentId], references: [id], onDelete: SetNull)
+  csatResponse   CsatResponse?   @relation(fields: [csatResponseId], references: [id], onDelete: SetNull)
+  recommendation Recommendation? @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+
+  @@index([integrationId])
+  @@index([projectId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("outbound_actions")
+}
+
+// ============================================================================
+// RECOMMENDATIONS & ALERTS
+// ============================================================================
+
+model Recommendation {
+  id                String                 @id @default(uuid()) @db.Uuid
+  projectId         String                 @map("project_id") @db.Uuid
+  momentId          String?                @map("moment_id") @db.Uuid
+  personaId         String?                @map("persona_id") @db.Uuid
+  generatedByUserId String?                @map("generated_by_user_id") @db.Uuid
+  title             String                 @db.VarChar(500)
+  description       String                 @db.Text
+  priority          RecommendationPriority @default(MEDIUM)
+  status            RecommendationStatus   @default(OPEN)
+  source            RecommendationSource   @default(MANUAL)
+  metadataJson      Json                   @default("{}") @map("metadata_json")
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @updatedAt @map("updated_at")
+
+  // Relations
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment          Moment?          @relation(fields: [momentId], references: [id], onDelete: SetNull)
+  persona         Persona?         @relation(fields: [personaId], references: [id], onDelete: SetNull)
+  generatedBy     User?            @relation("GeneratedByUser", fields: [generatedByUserId], references: [id], onDelete: SetNull)
+  outboundActions OutboundAction[]
+
+  @@index([projectId])
+  @@index([momentId])
+  @@index([personaId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+  @@map("recommendations")
+}
+
+model Alert {
+  id         String        @id @default(uuid()) @db.Uuid
+  projectId  String        @map("project_id") @db.Uuid
+  momentId   String?       @map("moment_id") @db.Uuid
+  type       AlertType
+  severity   AlertSeverity @default(INFO)
+  title      String        @db.VarChar(500)
+  message    String        @db.Text
+  isRead     Boolean       @default(false) @map("is_read")
+  metadataJson Json        @default("{}") @map("metadata_json")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  resolvedAt DateTime?     @map("resolved_at")
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  moment  Moment? @relation(fields: [momentId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([momentId])
+  @@index([type])
+  @@index([severity])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("alerts")
+}

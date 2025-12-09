@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: q-csat-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: qcsat
+      POSTGRES_PASSWORD: qcsat_dev_password
+      POSTGRES_DB: q_csat
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qcsat -d q_csat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: q-csat-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Q CSAT API (uncomment when ready)
+  # api:
+  #   build:
+  #     context: ..
+  #     dockerfile: infra/Dockerfile
+  #   container_name: q-csat-api
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     DATABASE_URL: postgresql://qcsat:qcsat_dev_password@postgres:5432/q_csat
+  #     REDIS_URL: redis://redis:6379
+  #     JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-min-32-chars}
+  #     SESSION_SECRET: ${SESSION_SECRET:-your-session-secret-min-32-chars}
+  #     NODE_ENV: development
+  #     PORT: 3001
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: q-csat-network
