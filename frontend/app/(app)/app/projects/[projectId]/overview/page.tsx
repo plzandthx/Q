@@ -13,6 +13,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { MetricCard } from '@/components/domain/metric-card';
+
+// Required for static export
+export function generateStaticParams() {
+  return [];
+}
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
 // TODO: Replace with API data

@@ -14,6 +14,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
+// Required for static export
+export function generateStaticParams() {
+  return [];
+}
+
 // TODO: Replace with API data
 const personas = [
   {
