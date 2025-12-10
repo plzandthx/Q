@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           avatar_url: authUser.user_metadata?.avatar_url || null,
           auth_provider: authUser.app_metadata?.provider === 'google' ? 'GOOGLE' : 'PASSWORD',
           email_verified: authUser.email_confirmed_at ? true : false,
-        })
+        } as Record<string, unknown>)
         .select()
         .single();
 
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .insert({
             name: `${name}'s Organization`,
             slug: `${orgSlug}-${Date.now()}`,
-          })
+          } as Record<string, unknown>)
           .select()
           .single();
 
@@ -91,13 +91,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             organization_id: orgData.id,
             user_id: authUser.id,
             role: 'OWNER',
-          });
+          } as Record<string, unknown>);
         }
       }
     }
 
     if (profileData) {
-      setProfile(profileData);
+      setProfile(profileData as UserProfile);
     }
 
     // Fetch organizations the user belongs to
@@ -200,7 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name,
         auth_provider: 'PASSWORD',
         email_verified: false,
-      });
+      } as Record<string, unknown>);
 
       // Create a default organization for the user
       const orgSlug = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
@@ -209,7 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .insert({
           name: `${name}'s Organization`,
           slug: `${orgSlug}-${Date.now()}`,
-        })
+        } as Record<string, unknown>)
         .select()
         .single();
 
@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           organization_id: orgData.id,
           user_id: data.user.id,
           role: 'OWNER',
-        });
+        } as Record<string, unknown>);
       }
     }
 
