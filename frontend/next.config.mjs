@@ -1,27 +1,15 @@
-import createMDX from '@next/mdx';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  experimental: {
-    mdxRs: true,
-  },
-};
-
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
-});
-
-export default withMDX(nextConfig);
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Helps when exporting to static HTML
-  // (configure-pages also sets this at build time)
+  // Required for GitHub Pages static export
   output: 'export',
+
+  // Page extensions including MDX
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+
+  // Disable image optimization for static export
+  images: {
+    unoptimized: true,
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
