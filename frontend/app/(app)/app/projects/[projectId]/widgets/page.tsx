@@ -8,11 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
-// Required for static export
-export function generateStaticParams() {
-  return [];
-}
-
 // TODO: Replace with API data
 const widgets = [
   {

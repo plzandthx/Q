@@ -1,14 +1,13 @@
-import { ProjectLayoutClient } from './project-layout-client';
-
 // Required for static export - generates no paths at build time
+// Pages are rendered client-side when navigated to
 export function generateStaticParams() {
   return [];
 }
 
-export default function ProjectLayout({
+export default function ResetPasswordLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <ProjectLayoutClient>{children}</ProjectLayoutClient>;
+  return children;
 }

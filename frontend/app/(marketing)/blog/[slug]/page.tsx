@@ -9,11 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
-// Required for static export
-export function generateStaticParams() {
-  return [];
-}
-
 // TODO: Replace with API/MDX data
 const post = {
   slug: 'future-of-customer-feedback',
