@@ -45,12 +45,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const supabase = createClient();
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    const { data: profileData } = await supabase
+  const fetchProfile = useCallback(async (userId: string, authUser?: User) => {
+    let { data: profileData } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single();
+
+    // If no profile exists (OAuth user first login), create one
+    if (!profileData && authUser) {
+      const name = authUser.user_metadata?.name ||
+                   authUser.user_metadata?.full_name ||
+                   authUser.email?.split('@')[0] ||
+                   'User';
+
+      const { data: newProfile } = await supabase
+        .from('users')
+        .insert({
+          id: authUser.id,
+          email: authUser.email!,
+          name,
+          avatar_url: authUser.user_metadata?.avatar_url || null,
+          auth_provider: authUser.app_metadata?.provider === 'google' ? 'GOOGLE' : 'PASSWORD',
+          email_verified: authUser.email_confirmed_at ? true : false,
+        })
+        .select()
+        .single();
+
+      if (newProfile) {
+        profileData = newProfile;
+
+        // Create default organization for new OAuth users
+        const orgSlug = authUser.email?.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-') || 'user';
+        const { data: orgData } = await supabase
+          .from('organizations')
+          .insert({
+            name: `${name}'s Organization`,
+            slug: `${orgSlug}-${Date.now()}`,
+          })
+          .select()
+          .single();
+
+        if (orgData) {
+          await supabase.from('org_memberships').insert({
+            organization_id: orgData.id,
+            user_id: authUser.id,
+            role: 'OWNER',
+          });
+        }
+      }
+    }
 
     if (profileData) {
       setProfile(profileData);
@@ -92,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          await fetchProfile(currentSession.user.id);
+          await fetchProfile(currentSession.user.id, currentSession.user);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -109,7 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(newSession?.user ?? null);
 
         if (event === 'SIGNED_IN' && newSession?.user) {
-          await fetchProfile(newSession.user.id);
+          await fetchProfile(newSession.user.id, newSession.user);
         } else if (event === 'SIGNED_OUT') {
           setProfile(null);
           setOrganizations([]);
@@ -144,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           name,
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/Q/app`,
       },
     });
 
@@ -186,7 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/Q/app`,
       },
     });
     return { error: error as Error | null };
@@ -196,7 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/Q/app`,
       },
     });
     return { error: error as Error | null };
