@@ -24,7 +24,8 @@ export function useSupabaseQuery<T>(
   }, [queryFn]);
 
   useEffect(() => {
-    refetch();
+    void refetch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { data, isLoading, error, refetch };
