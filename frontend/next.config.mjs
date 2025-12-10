@@ -1,3 +1,5 @@
+import createMDX from '@next/mdx';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Required for GitHub Pages static export
@@ -10,6 +12,18 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  // Enable MDX Rust compiler
+  experimental: {
+    mdxRs: true,
+  },
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);
