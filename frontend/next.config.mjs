@@ -5,6 +5,9 @@ const nextConfig = {
   // Required for GitHub Pages static export
   output: 'export',
 
+  // Base path for GitHub Pages (repository name)
+  basePath: '/Q',
+
   // Page extensions including MDX
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
 
