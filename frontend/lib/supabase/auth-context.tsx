@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (orgData) {
           await supabase.from('org_memberships').insert({
-            organization_id: orgData.id,
+            organization_id: (orgData as { id: string }).id,
             user_id: authUser.id,
             role: 'OWNER',
           } as Record<string, unknown>);
@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    initAuth();
+    void initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
@@ -216,7 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (orgData) {
         // Add user as owner of the organization
         await supabase.from('org_memberships').insert({
-          organization_id: orgData.id,
+          organization_id: (orgData as { id: string }).id,
           user_id: data.user.id,
           role: 'OWNER',
         } as Record<string, unknown>);
