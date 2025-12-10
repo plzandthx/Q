@@ -2,7 +2,18 @@ import createMDX from '@next/mdx';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Required for GitHub Pages static export
+  output: 'export',
+
+  // Page extensions including MDX
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+
+  // Disable image optimization for static export
+  images: {
+    unoptimized: true,
+  },
+
+  // Enable MDX Rust compiler
   experimental: {
     mdxRs: true,
   },
@@ -16,12 +27,3 @@ const withMDX = createMDX({
 });
 
 export default withMDX(nextConfig);
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Helps when exporting to static HTML
-  // (configure-pages also sets this at build time)
-  output: 'export',
-};
-
-module.exports = nextConfig;
