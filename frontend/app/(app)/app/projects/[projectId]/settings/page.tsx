@@ -13,11 +13,6 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
-// Required for static export
-export function generateStaticParams() {
-  return [];
-}
-
 const projectSchema = z.object({
   name: z.string().min(2),
   description: z.string().optional(),
