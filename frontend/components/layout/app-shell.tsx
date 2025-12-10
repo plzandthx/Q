@@ -25,6 +25,7 @@ export interface AppShellProps {
   organizations?: Organization[];
   currentOrganization?: Organization;
   onOrganizationChange?: (org: Organization) => void;
+  onSignOut?: () => void;
 }
 
 const AppShell: React.FC<AppShellProps> = ({
@@ -33,6 +34,7 @@ const AppShell: React.FC<AppShellProps> = ({
   organizations,
   currentOrganization,
   onOrganizationChange,
+  onSignOut,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -94,6 +96,7 @@ const AppShell: React.FC<AppShellProps> = ({
           organizations={organizations}
           currentOrganization={currentOrganization}
           onOrganizationChange={onOrganizationChange}
+          onSignOut={onSignOut}
           showMenuButton
           onMenuClick={() => setMobileMenuOpen(true)}
         />
