@@ -1,7 +1,6 @@
-// Required for static export - generates no paths at build time
-// Pages are rendered client-side when navigated to
+// Required for static export - generate a placeholder path
 export function generateStaticParams() {
-  return [];
+  return [{ token: 'placeholder' }];
 }
 
 export default function ResetPasswordLayout({

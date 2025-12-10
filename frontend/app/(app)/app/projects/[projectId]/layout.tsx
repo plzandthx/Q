@@ -1,8 +1,8 @@
 import { ProjectLayoutClient } from './project-layout-client';
 
-// Required for static export - generates no paths at build time
+// Required for static export - generate a placeholder path
 export function generateStaticParams() {
-  return [];
+  return [{ projectId: 'demo' }];
 }
 
 export default function ProjectLayout({
