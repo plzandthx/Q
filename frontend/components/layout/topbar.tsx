@@ -51,6 +51,7 @@ export interface TopbarProps {
   organizations?: Organization[];
   currentOrganization?: Organization;
   onOrganizationChange?: (org: Organization) => void;
+  onSignOut?: () => void;
   onMenuClick?: () => void;
   showMenuButton?: boolean;
   className?: string;
@@ -61,6 +62,7 @@ const Topbar: React.FC<TopbarProps> = ({
   organizations = [],
   currentOrganization,
   onOrganizationChange,
+  onSignOut,
   onMenuClick,
   showMenuButton = false,
   className,
@@ -221,7 +223,7 @@ const Topbar: React.FC<TopbarProps> = ({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="danger">
+            <DropdownMenuItem variant="danger" onClick={onSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
             </DropdownMenuItem>
