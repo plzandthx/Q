@@ -16,3 +16,12 @@ const withMDX = createMDX({
 });
 
 export default withMDX(nextConfig);
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Helps when exporting to static HTML
+  // (configure-pages also sets this at build time)
+  output: 'export',
+};
+
+module.exports = nextConfig;
