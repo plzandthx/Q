@@ -13,6 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MomentCard } from '@/components/domain/moment-card';
+
+// Required for static export
+export function generateStaticParams() {
+  return [];
+}
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
 // TODO: Replace with API data

@@ -11,6 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
+// Required for static export
+export function generateStaticParams() {
+  return [];
+}
+
 const resetPasswordSchema = z
   .object({
     password: z.string().min(8, 'Password must be at least 8 characters'),

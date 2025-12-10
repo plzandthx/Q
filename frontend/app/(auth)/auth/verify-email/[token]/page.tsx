@@ -7,6 +7,11 @@ import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
+// Required for static export
+export function generateStaticParams() {
+  return [];
+}
+
 type VerificationState = 'loading' | 'success' | 'error';
 
 export default function VerifyEmailPage() {
