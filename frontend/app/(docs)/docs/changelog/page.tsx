@@ -158,11 +158,11 @@ export default function ChangelogPage() {
           <CardContent className="p-6 text-center">
             <p className="text-neutral-600">
               Subscribe to release notes via{' '}
-              <a href="#" className="text-primary-600 hover:underline">
+              <a href="/docs/changelog/rss.xml" className="text-primary-600 hover:underline">
                 RSS
               </a>{' '}
               or follow us on{' '}
-              <a href="#" className="text-primary-600 hover:underline">
+              <a href="https://twitter.com/qcsat" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">
                 Twitter
               </a>
             </p>
