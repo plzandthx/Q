@@ -32,7 +32,6 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordForm) => {
     // TODO: Implement forgot password API call
-    console.log('Forgot password:', data);
     setSubmittedEmail(data.email);
     setSubmitted(true);
   };

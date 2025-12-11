@@ -28,7 +28,7 @@ const signUpSchema = z.object({
 type SignUpForm = z.infer<typeof signUpSchema>;
 
 function SignUpFormContent() {
-  const searchParams = useSearchParams();
+  const _searchParams = useSearchParams();
   const { signUp, signInWithGoogle, signInWithGithub } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);

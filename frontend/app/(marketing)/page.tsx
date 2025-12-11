@@ -10,7 +10,6 @@ import {
   Shield,
   Users,
   TrendingUp,
-  Check,
   Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

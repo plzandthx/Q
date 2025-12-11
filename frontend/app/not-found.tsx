@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Home, ArrowLeft, Search } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 

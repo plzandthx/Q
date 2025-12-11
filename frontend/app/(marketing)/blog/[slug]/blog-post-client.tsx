@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, Share2, Twitter, Linkedin, Copy, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Twitter, Linkedin, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 

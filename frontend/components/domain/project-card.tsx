@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { cn, formatScore } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
-import { Badge, StatusBadge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
