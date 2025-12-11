@@ -188,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           name,
         },
-        emailRedirectTo: `${window.location.origin}/Q/app`,
+        emailRedirectTo: `${window.location.origin}/Q/auth/callback`,
       },
     });
 
@@ -230,7 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/Q/app`,
+        redirectTo: `${window.location.origin}/Q/auth/callback`,
       },
     });
     return { error: error as Error | null };
@@ -240,7 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/Q/app`,
+        redirectTo: `${window.location.origin}/Q/auth/callback`,
       },
     });
     return { error: error as Error | null };
