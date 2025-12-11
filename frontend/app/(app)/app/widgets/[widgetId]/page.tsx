@@ -102,7 +102,7 @@ export default function WidgetDetailPage() {
   };
 
   const copyEmbedCode = () => {
-    navigator.clipboard.writeText(mockWidget.embedCode);
+    void navigator.clipboard.writeText(mockWidget.embedCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
