@@ -224,11 +224,11 @@ export default function StatusPage() {
         >
           <p className="text-neutral-600">
             Subscribe to status updates via{' '}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="/contact" className="text-primary-600 hover:underline">
               email
             </a>{' '}
             or{' '}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="/status/rss.xml" className="text-primary-600 hover:underline">
               RSS
             </a>
           </p>
