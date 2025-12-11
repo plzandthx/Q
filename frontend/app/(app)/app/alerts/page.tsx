@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+
 import { motion } from 'framer-motion';
 import {
   Bell,
@@ -104,7 +104,7 @@ const getAlertIcon = (type: string) => {
   }
 };
 
-const getAlertBadgeVariant = (type: string) => {
+const _getAlertBadgeVariant = (type: string) => {
   switch (type) {
     case 'warning':
       return 'warning';

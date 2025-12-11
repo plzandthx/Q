@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft,
   Save,
   RefreshCw,
   Trash2,
@@ -211,7 +210,7 @@ export default function IntegrationDetailPage() {
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="destructive">
+                          <Button variant="danger">
                             <Trash2 className="mr-2 h-4 w-4" />
                             Disconnect
                           </Button>

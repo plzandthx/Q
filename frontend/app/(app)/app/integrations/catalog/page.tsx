@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Search, ArrowLeft, Check } from 'lucide-react';
+import { Search, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageContainer, PageHeader } from '@/components/layout';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 

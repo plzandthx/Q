@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { PageContainer, PageHeader } from '@/components/layout';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
@@ -55,7 +55,7 @@ const scoreDistribution = [
   { score: 1, count: 467, percentage: 4 },
 ];
 
-const trendData = [
+const _trendData = [
   { period: 'Week 1', score: 4.0 },
   { period: 'Week 2', score: 4.1 },
   { period: 'Week 3', score: 3.9 },

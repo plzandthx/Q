@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
+
 import { PageContainer, PageHeader } from '@/components/layout';
 import { ProjectCard } from '@/components/domain/project-card';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';

@@ -95,7 +95,7 @@ function fontWeightToken(value: string): TokenValue {
 }
 
 // Helper to create a font family token
-function fontFamilyToken(value: string[]): TokenValue {
+function fontFamilyToken(value: readonly string[]): TokenValue {
   return {
     value: value.join(', '),
     type: 'fontFamilies',

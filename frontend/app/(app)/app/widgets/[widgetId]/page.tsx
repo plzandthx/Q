@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -431,7 +431,7 @@ export default function WidgetDetailPage() {
                   </div>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive">
+                      <Button variant="danger">
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete Widget
                       </Button>
