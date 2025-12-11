@@ -35,9 +35,8 @@ export default function ResetPasswordClient() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = async (data: ResetPasswordForm) => {
+  const onSubmit = async (_data: ResetPasswordForm) => {
     // TODO: Implement reset password API call
-    console.log('Reset password:', data);
     setSuccess(true);
   };
 
