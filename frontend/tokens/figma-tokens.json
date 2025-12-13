@@ -3,178 +3,178 @@
     "colors": {
       "primary": {
         "50": {
-          "value": "#f0fdfa",
+          "value": "#f0fdf4",
           "type": "color",
-          "description": "Primary 50"
+          "description": "Primary 50 - Forest Green"
         },
         "100": {
-          "value": "#ccfbf1",
+          "value": "#dcfce7",
           "type": "color",
-          "description": "Primary 100"
+          "description": "Primary 100 - Forest Green"
         },
         "200": {
-          "value": "#99f6e4",
+          "value": "#bbf7d0",
           "type": "color",
-          "description": "Primary 200"
+          "description": "Primary 200 - Forest Green"
         },
         "300": {
-          "value": "#5eead4",
+          "value": "#86efac",
           "type": "color",
-          "description": "Primary 300"
+          "description": "Primary 300 - Forest Green"
         },
         "400": {
-          "value": "#2dd4bf",
+          "value": "#4ade80",
           "type": "color",
-          "description": "Primary 400"
+          "description": "Primary 400 - Forest Green"
         },
         "500": {
-          "value": "#14b8a6",
+          "value": "#22c55e",
           "type": "color",
-          "description": "Primary 500"
+          "description": "Primary 500 - Forest Green"
         },
         "600": {
-          "value": "#0d9488",
+          "value": "#16a34a",
           "type": "color",
-          "description": "Primary 600"
+          "description": "Primary 600 - Forest Green"
         },
         "700": {
-          "value": "#0f766e",
+          "value": "#15803d",
           "type": "color",
-          "description": "Primary 700"
+          "description": "Primary 700 - Forest Green"
         },
         "800": {
-          "value": "#115e59",
+          "value": "#166534",
           "type": "color",
-          "description": "Primary 800"
+          "description": "Primary 800 - Forest Green"
         },
         "900": {
-          "value": "#134e4a",
+          "value": "#14532d",
           "type": "color",
-          "description": "Primary 900"
+          "description": "Primary 900 - Forest Green"
         },
         "950": {
-          "value": "#042f2e",
+          "value": "#052e16",
           "type": "color",
-          "description": "Primary 950"
+          "description": "Primary 950 - Forest Green"
         }
       },
       "accent": {
         "50": {
-          "value": "#eff6ff",
+          "value": "#fffbeb",
           "type": "color",
-          "description": "Accent 50"
+          "description": "Accent 50 - Warm Amber"
         },
         "100": {
-          "value": "#dbeafe",
+          "value": "#fef3c7",
           "type": "color",
-          "description": "Accent 100"
+          "description": "Accent 100 - Warm Amber"
         },
         "200": {
-          "value": "#bfdbfe",
+          "value": "#fde68a",
           "type": "color",
-          "description": "Accent 200"
+          "description": "Accent 200 - Warm Amber"
         },
         "300": {
-          "value": "#93c5fd",
+          "value": "#fcd34d",
           "type": "color",
-          "description": "Accent 300"
+          "description": "Accent 300 - Warm Amber"
         },
         "400": {
-          "value": "#60a5fa",
+          "value": "#fbbf24",
           "type": "color",
-          "description": "Accent 400"
+          "description": "Accent 400 - Warm Amber"
         },
         "500": {
-          "value": "#3b82f6",
+          "value": "#f59e0b",
           "type": "color",
-          "description": "Accent 500"
+          "description": "Accent 500 - Warm Amber"
         },
         "600": {
-          "value": "#2563eb",
+          "value": "#d97706",
           "type": "color",
-          "description": "Accent 600"
+          "description": "Accent 600 - Warm Amber"
         },
         "700": {
-          "value": "#1d4ed8",
+          "value": "#b45309",
           "type": "color",
-          "description": "Accent 700"
+          "description": "Accent 700 - Warm Amber"
         },
         "800": {
-          "value": "#1e40af",
+          "value": "#92400e",
           "type": "color",
-          "description": "Accent 800"
+          "description": "Accent 800 - Warm Amber"
         },
         "900": {
-          "value": "#1e3a8a",
+          "value": "#78350f",
           "type": "color",
-          "description": "Accent 900"
+          "description": "Accent 900 - Warm Amber"
         },
         "950": {
-          "value": "#172554",
+          "value": "#451a03",
           "type": "color",
-          "description": "Accent 950"
+          "description": "Accent 950 - Warm Amber"
         }
       },
       "neutral": {
         "0": {
           "value": "#ffffff",
           "type": "color",
-          "description": "Neutral 0"
+          "description": "Neutral 0 - Warm White"
         },
         "50": {
-          "value": "#fafafa",
+          "value": "#fafaf9",
           "type": "color",
-          "description": "Neutral 50"
+          "description": "Neutral 50 - Warm Stone"
         },
         "100": {
-          "value": "#f4f4f5",
+          "value": "#f5f5f4",
           "type": "color",
-          "description": "Neutral 100"
+          "description": "Neutral 100 - Warm Stone"
         },
         "200": {
-          "value": "#e4e4e7",
+          "value": "#e7e5e4",
           "type": "color",
-          "description": "Neutral 200"
+          "description": "Neutral 200 - Warm Stone"
         },
         "300": {
-          "value": "#d4d4d8",
+          "value": "#d6d3d1",
           "type": "color",
-          "description": "Neutral 300"
+          "description": "Neutral 300 - Warm Stone"
         },
         "400": {
-          "value": "#a1a1aa",
+          "value": "#a8a29e",
           "type": "color",
-          "description": "Neutral 400"
+          "description": "Neutral 400 - Warm Stone"
         },
         "500": {
-          "value": "#71717a",
+          "value": "#78716c",
           "type": "color",
-          "description": "Neutral 500"
+          "description": "Neutral 500 - Warm Stone"
         },
         "600": {
-          "value": "#52525b",
+          "value": "#57534e",
           "type": "color",
-          "description": "Neutral 600"
+          "description": "Neutral 600 - Warm Stone"
         },
         "700": {
-          "value": "#3f3f46",
+          "value": "#44403c",
           "type": "color",
-          "description": "Neutral 700"
+          "description": "Neutral 700 - Warm Stone"
         },
         "800": {
-          "value": "#27272a",
+          "value": "#292524",
           "type": "color",
-          "description": "Neutral 800"
+          "description": "Neutral 800 - Warm Stone"
         },
         "900": {
-          "value": "#18181b",
+          "value": "#1c1917",
           "type": "color",
-          "description": "Neutral 900"
+          "description": "Neutral 900 - Warm Stone"
         },
         "950": {
-          "value": "#09090b",
+          "value": "#0c0a09",
           "type": "color",
-          "description": "Neutral 950"
+          "description": "Neutral 950 - Warm Stone"
         }
       },
       "success": {
@@ -231,54 +231,54 @@
       },
       "warning": {
         "50": {
-          "value": "#fffbeb",
+          "value": "#fefce8",
           "type": "color",
-          "description": "Warning 50"
+          "description": "Warning 50 - Golden Honey"
         },
         "100": {
-          "value": "#fef3c7",
+          "value": "#fef9c3",
           "type": "color",
-          "description": "Warning 100"
+          "description": "Warning 100 - Golden Honey"
         },
         "200": {
-          "value": "#fde68a",
+          "value": "#fef08a",
           "type": "color",
-          "description": "Warning 200"
+          "description": "Warning 200 - Golden Honey"
         },
         "300": {
-          "value": "#fcd34d",
+          "value": "#fde047",
           "type": "color",
-          "description": "Warning 300"
+          "description": "Warning 300 - Golden Honey"
         },
         "400": {
-          "value": "#fbbf24",
+          "value": "#facc15",
           "type": "color",
-          "description": "Warning 400"
+          "description": "Warning 400 - Golden Honey"
         },
         "500": {
-          "value": "#f59e0b",
+          "value": "#eab308",
           "type": "color",
-          "description": "Warning 500"
+          "description": "Warning 500 - Golden Honey"
         },
         "600": {
-          "value": "#d97706",
+          "value": "#ca8a04",
           "type": "color",
-          "description": "Warning 600"
+          "description": "Warning 600 - Golden Honey"
         },
         "700": {
-          "value": "#b45309",
+          "value": "#a16207",
           "type": "color",
-          "description": "Warning 700"
+          "description": "Warning 700 - Golden Honey"
         },
         "800": {
-          "value": "#92400e",
+          "value": "#854d0e",
           "type": "color",
-          "description": "Warning 800"
+          "description": "Warning 800 - Golden Honey"
         },
         "900": {
-          "value": "#78350f",
+          "value": "#713f12",
           "type": "color",
-          "description": "Warning 900"
+          "description": "Warning 900 - Golden Honey"
         }
       },
       "danger": {
@@ -335,29 +335,29 @@
       },
       "csat": {
         "1": {
-          "value": "#ef4444",
+          "value": "#dc2626",
           "type": "color",
-          "description": "CSAT Score 1 - Very Dissatisfied"
+          "description": "CSAT Score 1 - Deep Red (Very Dissatisfied)"
         },
         "2": {
-          "value": "#f97316",
+          "value": "#ea580c",
           "type": "color",
-          "description": "CSAT Score 2 - Dissatisfied"
+          "description": "CSAT Score 2 - Burnt Orange (Dissatisfied)"
         },
         "3": {
-          "value": "#eab308",
+          "value": "#ca8a04",
           "type": "color",
-          "description": "CSAT Score 3 - Neutral"
+          "description": "CSAT Score 3 - Golden (Neutral)"
         },
         "4": {
-          "value": "#84cc16",
+          "value": "#65a30d",
           "type": "color",
-          "description": "CSAT Score 4 - Satisfied"
+          "description": "CSAT Score 4 - Spring Green (Satisfied)"
         },
         "5": {
-          "value": "#22c55e",
+          "value": "#16a34a",
           "type": "color",
-          "description": "CSAT Score 5 - Very Satisfied"
+          "description": "CSAT Score 5 - Forest Green (Very Satisfied)"
         }
       }
     },
@@ -628,7 +628,7 @@
         "type": "boxShadow"
       },
       "primary": {
-        "value": "0 4px 14px 0 rgb(20 184 166 / 0.3)",
+        "value": "0 4px 14px 0 rgb(34 197 94 / 0.3)",
         "type": "boxShadow"
       }
     },

@@ -3,75 +3,77 @@
 @tailwind utilities;
 
 /**
- * Q CSAT Global Styles
+ * Q CSAT Global Styles - Nature Theme
  *
  * This file contains base styles and CSS custom properties that complement
  * the Tailwind configuration. Use these for consistent theming across the app.
+ *
+ * Theme: Nature-inspired with forest greens, warm ambers, and earthy neutrals
  */
 
 @layer base {
-  /* CSS Custom Properties for dynamic theming */
+  /* CSS Custom Properties for dynamic theming - Nature Theme */
   :root {
-    /* Background colors */
+    /* Background colors - Warm white */
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 24 10% 10%;
 
-    /* Card & Popover */
+    /* Card & Popover - Clean white with warm text */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 24 10% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 24 10% 10%;
 
-    /* Primary - Teal */
-    --primary: 168 76% 42%;
+    /* Primary - Forest Green */
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary */
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    /* Secondary - Warm stone */
+    --secondary: 30 6% 96%;
+    --secondary-foreground: 24 10% 10%;
 
-    /* Muted */
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    /* Muted - Earthy gray */
+    --muted: 30 6% 96%;
+    --muted-foreground: 25 5% 45%;
 
-    /* Accent */
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Warm Amber */
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 0%;
 
-    /* Destructive */
+    /* Destructive - Autumn Red */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border & Input */
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 168 76% 42%;
+    /* Border & Input - Warm gray */
+    --border: 30 6% 90%;
+    --input: 30 6% 90%;
+    --ring: 142 71% 45%;
 
     /* Border radius */
     --radius: 0.5rem;
   }
 
-  /* Dark mode support (future) */
+  /* Dark mode support - Nature dark theme */
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 168 76% 42%;
+    --background: 24 10% 10%;
+    --foreground: 30 6% 96%;
+    --card: 24 10% 10%;
+    --card-foreground: 30 6% 96%;
+    --popover: 24 10% 10%;
+    --popover-foreground: 30 6% 96%;
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 168 76% 42%;
+    --secondary: 24 10% 15%;
+    --secondary-foreground: 30 6% 96%;
+    --muted: 24 10% 15%;
+    --muted-foreground: 25 5% 65%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 30 6% 96%;
+    --border: 24 10% 15%;
+    --input: 24 10% 15%;
+    --ring: 142 71% 45%;
   }
 
   /* Base element styles */
