@@ -1,12 +1,13 @@
 {
-  "mcpServers": {
+  "inputs": [],
+  "servers": {
     "supabase": {
-      "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=vntbqvwofbgnckpytzzn"
+      "url": "https://mcp.supabase.com/mcp?project_ref=vntbqvwofbgnckpytzzn",
+      "type": "http"
     },
     "figma": {
-      "type": "http",
-      "url": "https://mcp.figma.com/mcp"
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
     }
   }
 }
