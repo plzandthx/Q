@@ -2,129 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-/**
- * Q CSAT Design System - Global Styles
- *
- * Extracted from Figma: Q-CSAT-Design-System
- * https://www.figma.com/design/OGUpJgkxJw4ppNADSYS8cV/Q-CSAT-Design-System
- *
- * Theme: Teal primary with blue accents
- */
-
 @layer base {
-  /* CSS Custom Properties for dynamic theming */
   :root {
-    /* Background colors */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Nature Theme - Light Mode */
+    --background: 90 12% 95%; /* Light warm gray */
+    --foreground: 200 43% 14%; /* primary-900 */
 
-    /* Card & Popover */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --card-foreground: 200 43% 14%;
 
-    /* Primary - Teal */
-    --primary: 173 80% 40%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 43% 14%;
+
+    --primary: 173 44% 37%; /* #389084 */
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary */
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 90 29% 80%; /* accent-500 area */
+    --secondary-foreground: 93 47% 16%; /* accent-950 */
 
-    /* Muted */
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 90 12% 92%;
+    --muted-foreground: 240 4% 46%;
 
-    /* Accent - Blue */
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 90 29% 80%; /* #C6E8AD */
+    --accent-foreground: 93 47% 16%;
 
-    /* Destructive */
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border & Input */
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 173 80% 40%;
+    --border: 90 10% 85%;
+    --input: 90 10% 85%;
+    --ring: 173 44% 37%; /* primary */
 
-    /* Border radius */
     --radius: 0.5rem;
 
-    /* Font families (set by Next.js font loader) */
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', Consolas, monospace;
+    /* Primary Nature palette as CSS variables */
+    --color-primary-50: #E5E9E2;
+    --color-primary-100: #C6E8AD;
+    --color-primary-200: #A3CE83;
+    --color-primary-300: #70A449;
+    --color-primary-400: #568530;
+    --color-primary-500: #389084;
+    --color-primary-600: #296B62;
+    --color-primary-700: #264E46;
+    --color-primary-800: #233D28;
+    --color-primary-900: #0D2539;
+    --color-primary-950: #042F2E;
+
+    /* Accent Nature palette */
+    --color-accent-50: #E6EBE2;
+    --color-accent-100: #FBFFF9;
+    --color-accent-200: #F8FFF3;
+    --color-accent-300: #F1FDE9;
+    --color-accent-400: #D7F2C3;
+    --color-accent-500: #C6E8AD;
+    --color-accent-600: #AED493;
+    --color-accent-700: #81B05F;
+    --color-accent-800: #618844;
+    --color-accent-900: #416229;
+    --color-accent-950: #273D16;
+
+    /* CSAT Colors - Nature Theme */
+    --color-csat-1: #EF4444;
+    --color-csat-2: #F97316;
+    --color-csat-3: #EAB308;
+    --color-csat-4: #AED493;
+    --color-csat-5: #389084;
   }
 
-  /* Dark mode support */
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 173 80% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 173 80% 40%;
-  }
+    /* Nature Theme - Dark Mode */
+    --background: 200 43% 10%;
+    --foreground: 90 12% 95%;
 
-  /* Base element styles */
+    --card: 200 35% 12%;
+    --card-foreground: 90 12% 95%;
+
+    --popover: 200 35% 12%;
+    --popover-foreground: 90 12% 95%;
+
+    --primary: 173 44% 45%; /* Slightly lighter for dark mode */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 93 30% 25%;
+    --secondary-foreground: 90 29% 80%;
+
+    --muted: 200 30% 18%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 93 30% 35%;
+    --accent-foreground: 90 29% 90%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 25% 20%;
+    --input: 200 25% 20%;
+    --ring: 173 44% 45%;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
-
-  html {
-    @apply scroll-smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
   body {
-    @apply bg-background text-foreground font-sans;
-  }
-
-  /* Focus visible styles */
-  *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
-  }
-
-  /* Remove default focus for non-keyboard navigation */
-  *:focus:not(:focus-visible) {
-    @apply outline-none ring-0;
-  }
-
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    @apply w-2 h-2;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-neutral-100;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-300 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral-400;
-  }
-
-  /* Selection styling */
-  ::selection {
-    @apply bg-primary/20;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -133,35 +115,27 @@
   .text-display {
     @apply text-display tracking-tight;
   }
-
   .text-h1 {
     @apply text-h1 tracking-tight;
   }
-
   .text-h2 {
     @apply text-h2 tracking-tight;
   }
-
   .text-h3 {
     @apply text-h3;
   }
-
   .text-h4 {
     @apply text-h4;
   }
-
   .text-body {
     @apply text-body;
   }
-
   .text-body-sm {
     @apply text-body-sm;
   }
-
   .text-muted {
-    @apply text-sm text-muted-foreground;
+    @apply text-muted-foreground;
   }
-
   .text-caption {
     @apply text-caption text-muted-foreground;
   }
@@ -170,130 +144,92 @@
   .card-elevated {
     @apply bg-card rounded-xl shadow-card border border-border;
   }
-
   .card-elevated-hover {
-    @apply card-elevated transition-shadow duration-200 hover:shadow-cardHover;
+    @apply card-elevated transition-shadow hover:shadow-cardHover;
   }
-
   .card-flat {
     @apply bg-muted rounded-xl border border-border;
   }
-
   .card-interactive {
-    @apply card-elevated cursor-pointer transition-all duration-200
-           hover:shadow-cardHover hover:border-primary/20;
+    @apply card-elevated cursor-pointer transition-all hover:shadow-cardHover hover:border-primary/20;
+  }
+
+  /* CSAT Badge classes - Nature Theme */
+  .csat-badge-1 {
+    @apply bg-csat-1/10 text-csat-1 border-csat-1/20;
+  }
+  .csat-badge-2 {
+    @apply bg-csat-2/10 text-csat-2 border-csat-2/20;
+  }
+  .csat-badge-3 {
+    @apply bg-csat-3/10 text-csat-3 border-csat-3/20;
+  }
+  .csat-badge-4 {
+    @apply bg-[#AED493]/10 text-[#AED493] border-[#AED493]/20;
+  }
+  .csat-badge-5 {
+    @apply bg-[#389084]/10 text-[#389084] border-[#389084]/20;
   }
 
   /* Container utilities */
   .container-page {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-
   .container-narrow {
     @apply max-w-3xl mx-auto px-4 sm:px-6;
   }
 
-  /* Gradient backgrounds */
+  /* Gradient backgrounds - Nature Theme */
   .bg-gradient-primary {
     @apply bg-gradient-to-r from-primary-600 to-primary-500;
   }
-
   .bg-gradient-accent {
-    @apply bg-gradient-to-r from-accent-600 to-accent-500;
+    @apply bg-gradient-to-r from-accent-600 to-accent-400;
   }
-
   .bg-gradient-hero {
-    @apply bg-gradient-to-br from-primary-50 via-white to-accent-50;
+    @apply bg-gradient-to-br from-primary-50 via-accent-100 to-accent-200;
   }
 
-  /* CSAT score badges */
-  .csat-badge {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold text-white;
-  }
-
-  .csat-badge-1 {
-    @apply csat-badge bg-csat-1;
-  }
-
-  .csat-badge-2 {
-    @apply csat-badge bg-csat-2;
-  }
-
-  .csat-badge-3 {
-    @apply csat-badge bg-csat-3 text-neutral-900;
-  }
-
-  .csat-badge-4 {
-    @apply csat-badge bg-csat-4;
-  }
-
-  .csat-badge-5 {
-    @apply csat-badge bg-csat-5;
-  }
-
-  /* Loading skeleton animation */
+  /* Skeleton loading */
   .skeleton {
-    @apply animate-pulse bg-neutral-200 rounded;
+    @apply animate-pulse bg-muted rounded;
   }
 
-  /* Divider */
+  /* Dividers */
   .divider {
     @apply border-t border-border;
   }
-
   .divider-vertical {
     @apply border-l border-border h-full;
   }
 }
 
 @layer utilities {
-  /* Hide scrollbar while maintaining scroll functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  /* Scrollbar styling */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 3px;
   }
 
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  /* Selection styling */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
   }
 
-  /* Aspect ratio utilities */
-  .aspect-square {
-    aspect-ratio: 1 / 1;
-  }
-
-  .aspect-video {
-    aspect-ratio: 16 / 9;
-  }
-
-  /* Line clamp utilities */
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Safe area insets for mobile */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+  /* Focus visible styling */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 }
