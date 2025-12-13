@@ -3,77 +3,81 @@
 @tailwind utilities;
 
 /**
- * Q CSAT Global Styles - Nature Theme
+ * Q CSAT Design System - Global Styles
  *
- * This file contains base styles and CSS custom properties that complement
- * the Tailwind configuration. Use these for consistent theming across the app.
+ * Extracted from Figma: Q-CSAT-Design-System
+ * https://www.figma.com/design/OGUpJgkxJw4ppNADSYS8cV/Q-CSAT-Design-System
  *
- * Theme: Nature-inspired with forest greens, warm ambers, and earthy neutrals
+ * Theme: Teal primary with blue accents
  */
 
 @layer base {
-  /* CSS Custom Properties for dynamic theming - Nature Theme */
+  /* CSS Custom Properties for dynamic theming */
   :root {
-    /* Background colors - Warm white */
+    /* Background colors */
     --background: 0 0% 100%;
-    --foreground: 24 10% 10%;
+    --foreground: 240 10% 3.9%;
 
-    /* Card & Popover - Clean white with warm text */
+    /* Card & Popover */
     --card: 0 0% 100%;
-    --card-foreground: 24 10% 10%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 10% 10%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Forest Green */
-    --primary: 142 71% 45%;
+    /* Primary - Teal */
+    --primary: 173 80% 40%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Warm stone */
-    --secondary: 30 6% 96%;
-    --secondary-foreground: 24 10% 10%;
+    /* Secondary */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    /* Muted - Earthy gray */
-    --muted: 30 6% 96%;
-    --muted-foreground: 25 5% 45%;
+    /* Muted */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - Warm Amber */
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 0%;
+    /* Accent - Blue */
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Destructive - Autumn Red */
-    --destructive: 0 84% 60%;
+    /* Destructive */
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border & Input - Warm gray */
-    --border: 30 6% 90%;
-    --input: 30 6% 90%;
-    --ring: 142 71% 45%;
+    /* Border & Input */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 173 80% 40%;
 
     /* Border radius */
     --radius: 0.5rem;
+
+    /* Font families (set by Next.js font loader) */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
   }
 
-  /* Dark mode support - Nature dark theme */
+  /* Dark mode support */
   .dark {
-    --background: 24 10% 10%;
-    --foreground: 30 6% 96%;
-    --card: 24 10% 10%;
-    --card-foreground: 30 6% 96%;
-    --popover: 24 10% 10%;
-    --popover-foreground: 30 6% 96%;
-    --primary: 142 71% 45%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 173 80% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 24 10% 15%;
-    --secondary-foreground: 30 6% 96%;
-    --muted: 24 10% 15%;
-    --muted-foreground: 25 5% 65%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 30 6% 96%;
-    --border: 24 10% 15%;
-    --input: 24 10% 15%;
-    --ring: 142 71% 45%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 173 80% 40%;
   }
 
   /* Base element styles */
@@ -120,38 +124,38 @@
 
   /* Selection styling */
   ::selection {
-    @apply bg-primary/20 text-primary-foreground;
+    @apply bg-primary/20;
   }
 }
 
 @layer components {
   /* Typography utility classes */
   .text-display {
-    @apply text-5xl font-bold tracking-tight leading-none;
+    @apply text-display tracking-tight;
   }
 
   .text-h1 {
-    @apply text-4xl font-bold tracking-tight leading-tight;
+    @apply text-h1 tracking-tight;
   }
 
   .text-h2 {
-    @apply text-3xl font-semibold tracking-tight leading-tight;
+    @apply text-h2 tracking-tight;
   }
 
   .text-h3 {
-    @apply text-2xl font-semibold leading-snug;
+    @apply text-h3;
   }
 
   .text-h4 {
-    @apply text-xl font-semibold leading-snug;
+    @apply text-h4;
   }
 
   .text-body {
-    @apply text-base leading-relaxed;
+    @apply text-body;
   }
 
   .text-body-sm {
-    @apply text-sm leading-relaxed;
+    @apply text-body-sm;
   }
 
   .text-muted {
@@ -159,7 +163,7 @@
   }
 
   .text-caption {
-    @apply text-xs text-muted-foreground;
+    @apply text-caption text-muted-foreground;
   }
 
   /* Card variants */
@@ -168,7 +172,7 @@
   }
 
   .card-elevated-hover {
-    @apply card-elevated transition-shadow duration-200 hover:shadow-card-hover;
+    @apply card-elevated transition-shadow duration-200 hover:shadow-cardHover;
   }
 
   .card-flat {
@@ -177,7 +181,7 @@
 
   .card-interactive {
     @apply card-elevated cursor-pointer transition-all duration-200
-           hover:shadow-card-hover hover:border-primary/20;
+           hover:shadow-cardHover hover:border-primary/20;
   }
 
   /* Container utilities */
@@ -202,29 +206,29 @@
     @apply bg-gradient-to-br from-primary-50 via-white to-accent-50;
   }
 
-  /* CSAT score indicator */
-  .csat-score-badge {
+  /* CSAT score badges */
+  .csat-badge {
     @apply inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold text-white;
   }
 
-  .csat-score-badge-1 {
-    @apply csat-score-badge bg-csat-1;
+  .csat-badge-1 {
+    @apply csat-badge bg-csat-1;
   }
 
-  .csat-score-badge-2 {
-    @apply csat-score-badge bg-csat-2;
+  .csat-badge-2 {
+    @apply csat-badge bg-csat-2;
   }
 
-  .csat-score-badge-3 {
-    @apply csat-score-badge bg-csat-3;
+  .csat-badge-3 {
+    @apply csat-badge bg-csat-3 text-neutral-900;
   }
 
-  .csat-score-badge-4 {
-    @apply csat-score-badge bg-csat-4;
+  .csat-badge-4 {
+    @apply csat-badge bg-csat-4;
   }
 
-  .csat-score-badge-5 {
-    @apply csat-score-badge bg-csat-5;
+  .csat-badge-5 {
+    @apply csat-badge bg-csat-5;
   }
 
   /* Loading skeleton animation */
