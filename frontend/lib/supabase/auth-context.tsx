@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from './client';
+import { createClient, isSupabaseConfigured } from './client';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Tables } from './database.types';
 
@@ -168,6 +168,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase, fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
+    if (!isSupabaseConfigured()) {
+      return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -181,6 +185,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, name: string) => {
+    if (!isSupabaseConfigured()) {
+      return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -227,22 +235,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
+    if (!isSupabaseConfigured()) {
+      return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/Q/auth/callback`,
       },
     });
+
+    if (error) {
+      // Provide more helpful error messages for common OAuth issues
+      if (error.message?.includes('provider')) {
+        return { error: new Error('Google OAuth is not enabled in Supabase. Please enable it in your Supabase Dashboard under Authentication > Providers.') };
+      }
+    }
+
     return { error: error as Error | null };
   };
 
   const signInWithGithub = async () => {
+    if (!isSupabaseConfigured()) {
+      return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
         redirectTo: `${window.location.origin}/Q/auth/callback`,
       },
     });
+
+    if (error) {
+      // Provide more helpful error messages for common OAuth issues
+      if (error.message?.includes('provider')) {
+        return { error: new Error('GitHub OAuth is not enabled in Supabase. Please enable it in your Supabase Dashboard under Authentication > Providers.') };
+      }
+    }
+
     return { error: error as Error | null };
   };
 
