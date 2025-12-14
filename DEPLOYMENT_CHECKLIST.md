@@ -331,10 +331,13 @@ VALUES
 1. In Authentication section, click **URL Configuration**
 2. Set **Site URL**: `https://plzandthx.github.io/Q`
 3. Under **Redirect URLs**, click "Add URL" and add:
+   - `https://plzandthx.github.io/Q/auth/callback` **(REQUIRED for OAuth)**
    - `https://plzandthx.github.io/Q/app`
    - `https://plzandthx.github.io/Q/auth/sign-in`
    - `https://plzandthx.github.io/Q/auth/sign-up`
    - `http://localhost:3000/**` (for local development)
+
+**IMPORTANT**: The `/Q/auth/callback` URL is required for OAuth (Google, GitHub) to work properly. Without it, OAuth sign-in will fail with an "invalid redirect" error.
 
 ### Step 3.3: Enable Google OAuth (Optional)
 
@@ -509,13 +512,21 @@ CREATE TRIGGER on_auth_user_created
 
 ### Authentication Issues
 
+**Sign-in button spins forever / OAuth hangs**
+- Verify `https://plzandthx.github.io/Q/auth/callback` is added to Supabase redirect URLs
+- Check browser console for errors
+- Verify GitHub secrets `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set
+- Redeploy after adding secrets (they're embedded at build time)
+
 **"Invalid redirect URL"**
 - Add the exact URL to Supabase → Authentication → URL Configuration
+- Make sure to include `/Q/auth/callback` for OAuth to work
 - Include both with and without trailing slash
 
 **OAuth not working**
 - Verify callback URL in Google/GitHub matches your Supabase project ref
 - Check Client ID and Secret are correct in Supabase
+- Ensure `/Q/auth/callback` is in Supabase's allowed redirect URLs
 
 **"User not found in database"**
 - Ensure the auth trigger (Step 3.5) was created
