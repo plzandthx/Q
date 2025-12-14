@@ -214,16 +214,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error } = await withTimeout(
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        }),
+        AUTH_TIMEOUT,
+        'signIn'
+      );
 
-    if (!error) {
-      router.push('/app');
+      if (!error) {
+        router.push('/app');
+      }
+
+      return { error: error as Error | null };
+    } catch (err) {
+      console.error('Sign in error:', err);
+      return { error: err as Error };
     }
-
-    return { error: error as Error | null };
   };
 
   const signUp = async (email: string, password: string, name: string) => {
@@ -231,49 +240,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.') };
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
+    try {
+      const { data, error } = await withTimeout(
+        supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name,
+            },
+            emailRedirectTo: `${window.location.origin}/Q/auth/callback`,
+          },
+        }),
+        AUTH_TIMEOUT,
+        'signUp'
+      );
+
+      if (!error && data.user) {
+        // Create user profile in our users table
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email: data.user.email!,
           name,
-        },
-        emailRedirectTo: `${window.location.origin}/Q/auth/callback`,
-      },
-    });
-
-    if (!error && data.user) {
-      // Create user profile in our users table
-      await supabase.from('users').insert({
-        id: data.user.id,
-        email: data.user.email!,
-        name,
-        auth_provider: 'PASSWORD',
-        email_verified: false,
-      } as Record<string, unknown>);
-
-      // Create a default organization for the user
-      const orgSlug = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
-      const { data: orgData } = await supabase
-        .from('organizations')
-        .insert({
-          name: `${name}'s Organization`,
-          slug: `${orgSlug}-${Date.now()}`,
-        } as Record<string, unknown>)
-        .select()
-        .single();
-
-      if (orgData) {
-        // Add user as owner of the organization
-        await supabase.from('org_memberships').insert({
-          organization_id: (orgData as { id: string }).id,
-          user_id: data.user.id,
-          role: 'OWNER',
+          auth_provider: 'PASSWORD',
+          email_verified: false,
         } as Record<string, unknown>);
-      }
-    }
 
-    return { error: error as Error | null };
+        // Create a default organization for the user
+        const orgSlug = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const { data: orgData } = await supabase
+          .from('organizations')
+          .insert({
+            name: `${name}'s Organization`,
+            slug: `${orgSlug}-${Date.now()}`,
+          } as Record<string, unknown>)
+          .select()
+          .single();
+
+        if (orgData) {
+          // Add user as owner of the organization
+          await supabase.from('org_memberships').insert({
+            organization_id: (orgData as { id: string }).id,
+            user_id: data.user.id,
+            role: 'OWNER',
+          } as Record<string, unknown>);
+        }
+      }
+
+      return { error: error as Error | null };
+    } catch (err) {
+      console.error('Sign up error:', err);
+      return { error: err as Error };
+    }
   };
 
   const signInWithGoogle = async () => {
