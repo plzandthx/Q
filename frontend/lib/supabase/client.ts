@@ -6,6 +6,15 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placehol
 
 let client: SupabaseClient | null = null;
 
+// No-op lock function for static deployments where navigator.locks can hang
+const noOpLock = async <R>(
+  _name: string,
+  _acquireTimeout: number,
+  fn: () => Promise<R>
+): Promise<R> => {
+  return await fn();
+};
+
 export function createClient() {
   if (!client) {
     client = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -13,7 +22,7 @@ export function createClient() {
         // Use implicit flow for static exports (GitHub Pages)
         flowType: 'implicit',
         // Disable navigator.locks which can hang on static deployments
-        lock: 'no-op',
+        lock: noOpLock,
         // Detect session from URL for OAuth callbacks
         detectSessionInUrl: true,
         // Persist session in localStorage
