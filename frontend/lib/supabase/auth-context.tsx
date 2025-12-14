@@ -17,6 +17,18 @@ type UserProfile = Tables<'users'>;
 type Organization = Tables<'organizations'>;
 type OrgMembership = Tables<'org_memberships'>;
 
+// Timeout for auth operations to prevent hanging forever
+const AUTH_TIMEOUT = 10000; // 10 seconds
+
+function withTimeout<T>(promise: Promise<T>, ms: number, operation: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${operation} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
@@ -130,13 +142,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const initAuth = async () => {
+      // Check if Supabase is properly configured
+      if (!isSupabaseConfigured()) {
+        console.warn('Supabase is not configured. Authentication will not work.');
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        const { data: { session: currentSession } } = await withTimeout(
+          supabase.auth.getSession(),
+          AUTH_TIMEOUT,
+          'getSession'
+        );
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          await fetchProfile(currentSession.user.id, currentSession.user);
+          // Wrap fetchProfile in try-catch to prevent it from blocking loading state
+          try {
+            await withTimeout(
+              fetchProfile(currentSession.user.id, currentSession.user),
+              AUTH_TIMEOUT,
+              'fetchProfile'
+            );
+          } catch (profileError) {
+            console.error('Error fetching profile (non-blocking):', profileError);
+            // Continue without profile - user is still authenticated
+          }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -153,7 +186,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(newSession?.user ?? null);
 
         if (event === 'SIGNED_IN' && newSession?.user) {
-          await fetchProfile(newSession.user.id, newSession.user);
+          try {
+            await withTimeout(
+              fetchProfile(newSession.user.id, newSession.user),
+              AUTH_TIMEOUT,
+              'fetchProfile on sign-in'
+            );
+          } catch (profileError) {
+            console.error('Error fetching profile on sign-in:', profileError);
+            // Continue without profile - user is still authenticated
+          }
         } else if (event === 'SIGNED_OUT') {
           setProfile(null);
           setOrganizations([]);
