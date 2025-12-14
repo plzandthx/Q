@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
 function LoadingSpinner() {
@@ -23,6 +23,12 @@ function AuthCallbackContent() {
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Check if Supabase is configured
+      if (!isSupabaseConfigured()) {
+        setError('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
+        return;
+      }
+
       const supabase = createClient();
 
       // Get the code from URL parameters (for PKCE flow)
@@ -31,7 +37,14 @@ function AuthCallbackContent() {
       const errorDescription = searchParams.get('error_description');
 
       if (errorParam) {
-        setError(errorDescription || errorParam);
+        // Provide more helpful error messages
+        let errorMessage = errorDescription || errorParam;
+        if (errorParam === 'access_denied') {
+          errorMessage = 'Access was denied. This may be because the OAuth redirect URL is not configured in Supabase Dashboard.';
+        } else if (errorParam === 'invalid_request') {
+          errorMessage = 'Invalid OAuth request. Please ensure Google/GitHub OAuth is properly configured in Supabase.';
+        }
+        setError(errorMessage);
         return;
       }
 
@@ -42,7 +55,11 @@ function AuthCallbackContent() {
 
           if (exchangeError) {
             console.error('Error exchanging code for session:', exchangeError);
-            setError(exchangeError.message);
+            let errorMessage = exchangeError.message;
+            if (errorMessage.includes('invalid_grant')) {
+              errorMessage = 'The authorization code has expired or already been used. Please try signing in again.';
+            }
+            setError(errorMessage);
             return;
           }
 

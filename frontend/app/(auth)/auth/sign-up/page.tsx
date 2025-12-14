@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
-import { useAuth } from '@/lib/supabase';
+import { useAuth, isSupabaseConfigured } from '@/lib/supabase';
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -32,6 +32,7 @@ function SignUpFormContent() {
   const { signUp, signInWithGoogle, signInWithGithub } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const supabaseConfigured = isSupabaseConfigured();
 
   const {
     register,
@@ -116,6 +117,21 @@ function SignUpFormContent() {
           </Link>
         </p>
       </motion.div>
+
+      {!supabaseConfigured && (
+        <motion.div variants={staggerItemVariants} className="mt-4">
+          <div className="rounded-md bg-amber-50 border border-amber-200 p-4 text-sm">
+            <p className="font-medium text-amber-800">Supabase Not Configured</p>
+            <p className="mt-1 text-amber-700">
+              Authentication requires Supabase environment variables. Please configure:
+            </p>
+            <ul className="mt-2 list-disc list-inside text-amber-700 text-xs space-y-1">
+              <li>NEXT_PUBLIC_SUPABASE_URL</li>
+              <li>NEXT_PUBLIC_SUPABASE_ANON_KEY</li>
+            </ul>
+          </div>
+        </motion.div>
+      )}
 
       <motion.div variants={staggerItemVariants} className="mt-8">
         {/* Social Login */}
