@@ -259,12 +259,12 @@ export default function HowItWorksPage() {
           <div className="mt-8 flex justify-center gap-4">
             <Button size="lg" asChild>
               <Link href="/auth/sign-up">
-                Start Free Trial
+                Start free trial
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/contact">Schedule Demo</Link>
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/contact">Schedule demo</Link>
             </Button>
           </div>
         </motion.div>
