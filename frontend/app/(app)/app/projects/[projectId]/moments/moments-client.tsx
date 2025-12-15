@@ -118,7 +118,7 @@ export function MomentsClient() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>View Analytics</DropdownMenuItem>
+                    <DropdownMenuItem>View analytics</DropdownMenuItem>
                     <DropdownMenuItem>
                       {moment.status === 'active' ? 'Pause' : 'Activate'}
                     </DropdownMenuItem>

@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils';
 export type LogoVariant = 'primary' | 'white' | 'black' | 'currentColor';
 export type LogoSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
-// Sizes maintain exact 167:149 aspect ratio from the original SVG
-const sizeMap: Record<LogoSize, { width: number; height: number; fontSize: string }> = {
-  xs: { width: 22, height: 20, fontSize: 'text-sm' },
-  sm: { width: 28, height: 25, fontSize: 'text-base' },
-  md: { width: 36, height: 32, fontSize: 'text-lg' },
-  lg: { width: 45, height: 40, fontSize: 'text-xl' },
-  xl: { width: 60, height: 54, fontSize: 'text-2xl' },
+// Height-based sizing to maintain natural aspect ratio (167:149 ≈ 1.12:1)
+const sizeMap: Record<LogoSize, { height: number; fontSize: string }> = {
+  xs: { height: 18, fontSize: 'text-sm' },
+  sm: { height: 22, fontSize: 'text-base' },
+  md: { height: 28, fontSize: 'text-lg' },
+  lg: { height: 36, fontSize: 'text-xl' },
+  xl: { height: 48, fontSize: 'text-2xl' },
 };
 
 const colorMap: Record<Exclude<LogoVariant, 'currentColor'>, string> = {
@@ -51,13 +51,12 @@ export function Logo({
   showWordmark = false,
   className,
 }: LogoProps) {
-  const { width, height, fontSize } = sizeMap[size];
+  const { height, fontSize } = sizeMap[size];
   const strokeColor = variant === 'currentColor' ? 'currentColor' : colorMap[variant];
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <svg
-        width={width}
         height={height}
         viewBox="0 0 167 149"
         fill="none"
@@ -66,6 +65,7 @@ export function Logo({
         role="img"
         className="flex-shrink-0"
         style={{ overflow: 'visible' }}
+        preserveAspectRatio="xMidYMid meet"
       >
         <mask
           id={`logo-mask-${variant}-${size}`}
@@ -133,8 +133,10 @@ export function LogoImage({
   className,
   priority = false,
 }: LogoImageProps) {
-  const { width, height, fontSize } = sizeMap[size];
+  const { height, fontSize } = sizeMap[size];
   const src = `/assets/logos/q-csat-logo-${variant}.svg`;
+  // Calculate width based on aspect ratio (167:149)
+  const width = Math.round(height * (167 / 149));
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
@@ -144,7 +146,7 @@ export function LogoImage({
         width={width}
         height={height}
         priority={priority}
-        className="h-auto"
+        style={{ width: 'auto', height }}
       />
       {showWordmark && (
         <span className={cn('font-semibold', fontSize)}>CSAT</span>

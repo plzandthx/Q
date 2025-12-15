@@ -104,7 +104,7 @@ export function SettingsClient() {
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSubmitting}>
                   <Save className="mr-2 h-4 w-4" />
-                  {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  {isSubmitting ? 'Saving...' : 'Save changes'}
                 </Button>
               </div>
             </form>

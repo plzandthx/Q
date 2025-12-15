@@ -118,7 +118,7 @@ export function PersonasClient() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>View Analytics</DropdownMenuItem>
+                    <DropdownMenuItem>View analytics</DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600">
                       Delete
                     </DropdownMenuItem>
