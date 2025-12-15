@@ -12,41 +12,51 @@
  */
 
 @layer base {
-  /* CSS Custom Properties for dynamic theming - Nature Theme */
+  /* CSS Custom Properties for dynamic theming - Nature Theme
+   *
+   * These values must stay in sync with:
+   * - tailwind.config.ts
+   * - lib/design-tokens.ts
+   * - tokens/figma-tokens.json
+   *
+   * Color format: HSL values without the hsl() wrapper
+   * Usage: background-color: hsl(var(--primary));
+   */
   :root {
-    /* Background colors - Warm white */
+    /* Background - #FFFFFF */
     --background: 0 0% 100%;
-    --foreground: 200 43% 14%;
+    /* Foreground - #18181B (neutral-900) */
+    --foreground: 240 6% 10%;
 
-    /* Card & Popover - Clean white with warm text */
+    /* Card & Popover - White with dark text */
     --card: 0 0% 100%;
-    --card-foreground: 200 43% 14%;
+    --card-foreground: 240 6% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 200 43% 14%;
+    --popover-foreground: 240 6% 10%;
 
-    /* Primary - Nature Teal Green (#389084) */
+    /* Primary - #389084 (Nature Teal) */
     --primary: 173 44% 37%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Light green tones */
-    --secondary: 90 29% 80%;
-    --secondary-foreground: 93 47% 16%;
+    /* Secondary - #F4F4F5 (neutral-100) */
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
 
-    /* Muted - Earthy gray */
-    --muted: 90 12% 92%;
+    /* Muted - #F4F4F5 (neutral-100) */
+    --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
 
-    /* Accent - Nature Green (#C6E8AD) */
+    /* Accent - #C6E8AD (Soft green) */
     --accent: 90 54% 79%;
     --accent-foreground: 93 47% 16%;
 
-    /* Destructive - Red */
+    /* Destructive - #EF4444 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Border & Input - Warm gray */
-    --border: 90 10% 85%;
-    --input: 90 10% 85%;
+    /* Border & Input - #E4E4E7 (neutral-200) */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
     --ring: 173 44% 37%;
 
     /* Border radius */
