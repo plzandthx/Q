@@ -149,6 +149,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
     const isDisabled = disabled || loading;
 
+    // When using asChild, pass children directly without wrapping
+    // Slot expects a single element child to merge props onto
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, fullWidth, className }))}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </Comp>
+      );
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, fullWidth, className }))}
