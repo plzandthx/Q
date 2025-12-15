@@ -7,7 +7,10 @@
     },
     "figma": {
       "url": "https://mcp.figma.com/mcp",
-      "type": "http"
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer YOUR_FIGMA_ACCESS_TOKEN"
+      }
     }
   }
 }
