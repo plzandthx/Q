@@ -47,12 +47,12 @@ const buttonVariants = cva(
           'active:bg-primary-700',
           'shadow-sm hover:shadow-primary',
         ],
-        // Secondary - for secondary actions
+        // Secondary - for secondary actions (visible gray with border)
         secondary: [
-          'bg-secondary text-secondary-foreground',
+          'bg-neutral-100 text-neutral-900',
           'hover:bg-neutral-200',
           'active:bg-neutral-300',
-          'border border-border',
+          'border border-neutral-300',
         ],
         // Outline - bordered style
         outline: [

@@ -53,10 +53,13 @@ export function Logo({
 }: LogoProps) {
   const { height, fontSize } = sizeMap[size];
   const strokeColor = variant === 'currentColor' ? 'currentColor' : colorMap[variant];
+  // Calculate width based on SVG viewBox aspect ratio (167:149)
+  const width = Math.round(height * (167 / 149));
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <svg
+        width={width}
         height={height}
         viewBox="0 0 167 149"
         fill="none"
