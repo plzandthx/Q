@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from '@/components/ui/logo';
 
 const footerLinks = {
   product: [
@@ -33,11 +34,8 @@ export function MarketingFooter() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
-                <span className="text-lg font-bold text-white">Q</span>
-              </div>
-              <span className="text-xl font-semibold text-neutral-900">CSAT</span>
+            <Link href="/" className="flex items-center">
+              <Logo variant="primary" size="md" showWordmark />
             </Link>
             <p className="mt-4 text-sm text-neutral-600">
               Transform customer feedback into actionable insights that drive growth.
