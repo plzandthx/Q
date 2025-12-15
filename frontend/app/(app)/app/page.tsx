@@ -248,25 +248,25 @@ export default function DashboardPage() {
                 <Button variant="outline" className="h-auto py-4" asChild>
                   <Link href="/app/projects/new" className="flex flex-col items-center gap-2">
                     <Plus className="h-5 w-5" />
-                    <span>Create Project</span>
+                    <span>Create project</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="h-auto py-4" asChild>
                   <Link href="/app/widgets" className="flex flex-col items-center gap-2">
                     <MessageSquare className="h-5 w-5" />
-                    <span>Configure Widget</span>
+                    <span>Configure widget</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="h-auto py-4" asChild>
                   <Link href="/app/integrations" className="flex flex-col items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
-                    <span>Add Integration</span>
+                    <span>Add integration</span>
                   </Link>
                 </Button>
                 <Button variant="outline" className="h-auto py-4" asChild>
                   <Link href="/app/reports/csat" className="flex flex-col items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
-                    <span>View Reports</span>
+                    <span>View reports</span>
                   </Link>
                 </Button>
               </div>

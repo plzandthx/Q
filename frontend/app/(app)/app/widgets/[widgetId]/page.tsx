@@ -262,7 +262,7 @@ export default function WidgetDetailPage() {
                   >
                     <Button type="submit" disabled={isSubmitting}>
                       <Save className="mr-2 h-4 w-4" />
-                      {isSubmitting ? 'Saving...' : 'Save Changes'}
+                      {isSubmitting ? 'Saving...' : 'Save changes'}
                     </Button>
                   </motion.div>
                 )}

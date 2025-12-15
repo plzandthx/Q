@@ -187,7 +187,7 @@ export default function IntegrationDetailPage() {
                     <div className="pt-4">
                       <Button>
                         <Save className="mr-2 h-4 w-4" />
-                        Save Changes
+                        Save changes
                       </Button>
                     </div>
                   </CardContent>
@@ -253,7 +253,7 @@ export default function IntegrationDetailPage() {
                     <div className="flex items-center justify-between">
                       <CardTitle>Recent Activity</CardTitle>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href="/app/integrations/logs">View All Logs</Link>
+                        <Link href="/app/integrations/logs">View all logs</Link>
                       </Button>
                     </div>
                   </CardHeader>

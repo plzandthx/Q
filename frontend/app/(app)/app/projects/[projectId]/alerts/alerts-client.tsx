@@ -152,8 +152,8 @@ export function AlertsClient() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Test Alert</DropdownMenuItem>
-                        <DropdownMenuItem>View History</DropdownMenuItem>
+                        <DropdownMenuItem>Test alert</DropdownMenuItem>
+                        <DropdownMenuItem>View history</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600">
                           Delete
                         </DropdownMenuItem>
