@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from '@/components/ui/logo';
 
 export default function AuthLayout({
   children,
@@ -10,11 +11,8 @@ export default function AuthLayout({
       {/* Left Side - Form */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
-          <Link href="/" className="flex items-center gap-2 mb-8">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
-              <span className="text-lg font-bold text-white">Q</span>
-            </div>
-            <span className="text-xl font-semibold text-neutral-900">CSAT</span>
+          <Link href="/" className="flex items-center mb-8">
+            <Logo variant="primary" size="md" showWordmark />
           </Link>
           {children}
         </div>

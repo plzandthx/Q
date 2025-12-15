@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Search, Book, Code, Plug, Shield, FileText, Bell } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 
 const docsNav = [
   {
@@ -86,11 +87,8 @@ export default function DocsLayout({
       <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-neutral-200 bg-white">
         <div className="flex h-full items-center justify-between px-4">
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
-                <span className="text-lg font-bold text-white">Q</span>
-              </div>
-              <span className="text-xl font-semibold text-neutral-900">CSAT</span>
+            <Link href="/" className="flex items-center">
+              <Logo variant="primary" size="md" showWordmark />
             </Link>
             <span className="text-neutral-300">|</span>
             <span className="font-medium text-neutral-600">Documentation</span>
