@@ -116,17 +116,19 @@ export default function HomePage() {
               variants={staggerItemVariants}
               className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl"
             >
-              Customer satisfaction
-              <br />
-              <span className="text-primary-600">intelligence</span> that drives growth
+              Automate feedback,{' '}
+              <span className="text-primary-600">measure the moments that matter,</span>{' '}
+              and get insights to improve your business
             </motion.h1>
 
             <motion.p
               variants={staggerItemVariants}
-              className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600"
+              className="mx-auto mt-6 max-w-3xl text-lg text-neutral-600"
             >
-              Transform customer feedback into actionable insights. Q CSAT helps you
-              understand what matters most to your customers at every touchpoint.
+              Connect integrations to automate your customer feedback all in one place,
+              personalize your CSAT dashboard designed around the moments that matter
+              to you and your customers, and get AI-powered insights pushed directly
+              to your product roadmap ecosystem.
             </motion.p>
 
             <motion.div
