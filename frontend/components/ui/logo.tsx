@@ -7,12 +7,13 @@ import { cn } from '@/lib/utils';
 export type LogoVariant = 'primary' | 'white' | 'black' | 'currentColor';
 export type LogoSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
+// Sizes maintain exact 167:149 aspect ratio from the original SVG
 const sizeMap: Record<LogoSize, { width: number; height: number; fontSize: string }> = {
-  xs: { width: 20, height: 18, fontSize: 'text-sm' },
-  sm: { width: 24, height: 22, fontSize: 'text-base' },
-  md: { width: 32, height: 29, fontSize: 'text-lg' },
-  lg: { width: 40, height: 36, fontSize: 'text-xl' },
-  xl: { width: 56, height: 50, fontSize: 'text-2xl' },
+  xs: { width: 22, height: 20, fontSize: 'text-sm' },
+  sm: { width: 28, height: 25, fontSize: 'text-base' },
+  md: { width: 36, height: 32, fontSize: 'text-lg' },
+  lg: { width: 45, height: 40, fontSize: 'text-xl' },
+  xl: { width: 60, height: 54, fontSize: 'text-2xl' },
 };
 
 const colorMap: Record<Exclude<LogoVariant, 'currentColor'>, string> = {
@@ -63,6 +64,8 @@ export function Logo({
         xmlns="http://www.w3.org/2000/svg"
         aria-label="Q CSAT Logo"
         role="img"
+        className="flex-shrink-0"
+        style={{ overflow: 'visible' }}
       >
         <mask
           id={`logo-mask-${variant}-${size}`}

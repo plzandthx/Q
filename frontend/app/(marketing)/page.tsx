@@ -135,12 +135,12 @@ export default function HomePage() {
             >
               <Button size="lg" asChild>
                 <Link href="/auth/sign-up">
-                  Start Free Trial
+                  Start free trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/how-it-works">See How it Works</Link>
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/how-it-works">See how it works</Link>
               </Button>
             </motion.div>
 
@@ -333,19 +333,23 @@ export default function HomePage() {
                 and business growth.
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Button size="lg" variant="secondary" asChild>
+                <Button
+                  size="lg"
+                  className="bg-white text-primary-600 hover:bg-neutral-100 active:bg-neutral-200"
+                  asChild
+                >
                   <Link href="/auth/sign-up">
-                    Start Free Trial
+                    Start free trial
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button
                   size="lg"
-                  variant="ghost"
-                  className="text-white hover:bg-primary-500 hover:text-white"
+                  variant="outline"
+                  className="border-white/50 bg-transparent text-white hover:bg-white/10 hover:border-white"
                   asChild
                 >
-                  <Link href="/contact">Talk to Sales</Link>
+                  <Link href="/contact">Talk to sales</Link>
                 </Button>
               </div>
             </div>

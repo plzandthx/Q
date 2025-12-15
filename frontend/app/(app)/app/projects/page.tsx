@@ -90,7 +90,7 @@ export default function ProjectsPage() {
         <Button asChild>
           <Link href="/app/projects/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Project
+            New project
           </Link>
         </Button>
       </PageHeader>
@@ -206,7 +206,7 @@ export default function ProjectsPage() {
             <Button className="mt-6" asChild>
               <Link href="/app/projects/new">
                 <Plus className="mr-2 h-4 w-4" />
-                Create Project
+                Create project
               </Link>
             </Button>
           </motion.div>

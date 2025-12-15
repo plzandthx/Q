@@ -49,11 +49,11 @@ export function MarketingHeader() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex md:items-center md:gap-3">
-          <Button variant="ghost" asChild>
+          <Button variant="secondary" asChild>
             <Link href="/auth/sign-in">Sign in</Link>
           </Button>
           <Button asChild>
-            <Link href="/auth/sign-up">Get Started</Link>
+            <Link href="/auth/sign-up">Get started</Link>
           </Button>
         </div>
 
@@ -97,11 +97,11 @@ export function MarketingHeader() {
               </Link>
             ))}
             <div className="mt-4 flex flex-col gap-2 pt-4 border-t border-neutral-200">
-              <Button variant="outline" asChild className="w-full">
+              <Button variant="secondary" asChild className="w-full">
                 <Link href="/auth/sign-in">Sign in</Link>
               </Button>
               <Button asChild className="w-full">
-                <Link href="/auth/sign-up">Get Started</Link>
+                <Link href="/auth/sign-up">Get started</Link>
               </Button>
             </div>
           </div>
