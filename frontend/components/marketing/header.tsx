@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/ui/logo';
 
 const navigation = [
   { name: 'Product', href: '/product' },
@@ -24,11 +25,8 @@ export function MarketingHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-neutral-200 bg-white/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
-            <span className="text-lg font-bold text-white">Q</span>
-          </div>
-          <span className="text-xl font-semibold text-neutral-900">CSAT</span>
+        <Link href="/" className="flex items-center">
+          <Logo variant="primary" size="md" showWordmark />
         </Link>
 
         {/* Desktop Navigation */}
