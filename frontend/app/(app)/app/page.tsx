@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { PageContainer, PageHeader } from '@/components/layout';
 import { MetricCard } from '@/components/domain/metric-card';
+import { CSATDashboardEmptyState } from '@/components/domain/csat-dashboard-empty-state';
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/motion';
 
 // TODO: Replace with API data
@@ -52,7 +54,17 @@ const metrics = [
   },
 ];
 
-const recentProjects = [
+// Type for project data used in the dashboard
+interface DashboardProject {
+  id: string;
+  name: string;
+  score: number;
+  responses: number;
+  trend: 'up' | 'down';
+}
+
+// Sample project data for when user has projects
+const _sampleProjects: DashboardProject[] = [
   {
     id: '1',
     name: 'Mobile App',
@@ -98,11 +110,17 @@ const alerts = [
 ];
 
 export default function DashboardPage() {
+  // TODO: Replace with useProjects hook for real data
+  // const { data: projects, isLoading } = useProjects();
+  // For now, use empty array to show empty state (set to _sampleProjects to see dashboard)
+  const [projects] = useState<DashboardProject[]>([]);
+  const hasProjects = projects.length > 0;
+
   return (
     <PageContainer>
       <PageHeader
         title="Dashboard"
-        description="Overview of your customer satisfaction metrics."
+        description="Overview of your customer satisfaction metrics across projects"
       >
         <Button asChild>
           <Link href="/app/projects/new">
@@ -118,161 +136,171 @@ export default function DashboardPage() {
         variants={staggerContainerVariants}
         className="space-y-8"
       >
-        {/* Metrics Grid */}
-        <motion.div
-          variants={staggerContainerVariants}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {metrics.map((metric) => (
-            <motion.div key={metric.title} variants={staggerItemVariants}>
-              <MetricCard
-                title={metric.title}
-                value={metric.value}
-                change={metric.change}
-                changeLabel={metric.changeLabel}
-                icon={metric.icon}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Empty State - Shown when user has no projects */}
+        {!hasProjects && (
+          <CSATDashboardEmptyState />
+        )}
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* Recent Projects */}
-          <motion.div variants={staggerItemVariants} className="lg:col-span-2">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Recent Projects</CardTitle>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/app/projects">
-                    View all
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentProjects.map((project) => (
-                    <Link
-                      key={project.id}
-                      href={`/app/projects/${project.id}/overview`}
-                      className="block"
-                    >
-                      <div className="flex items-center justify-between p-4 rounded-lg border border-neutral-200 hover:border-primary-300 hover:bg-primary-50/50 transition-colors">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-neutral-900">
-                            {project.name}
-                          </h3>
-                          <p className="text-sm text-neutral-500">
-                            {project.responses.toLocaleString()} responses
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-neutral-900">
-                              {project.score}
-                            </p>
-                            <div className="flex items-center gap-1 text-sm">
-                              {project.trend === 'up' ? (
-                                <>
-                                  <ArrowUpRight className="h-4 w-4 text-green-500" />
-                                  <span className="text-green-600">Up</span>
-                                </>
-                              ) : (
-                                <>
-                                  <ArrowDownRight className="h-4 w-4 text-red-500" />
-                                  <span className="text-red-600">Down</span>
-                                </>
-                              )}
+        {/* Dashboard Content - Shown when user has projects */}
+        {hasProjects && (
+          <>
+            {/* Metrics Grid */}
+            <motion.div
+              variants={staggerContainerVariants}
+              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {metrics.map((metric) => (
+                <motion.div key={metric.title} variants={staggerItemVariants}>
+                  <MetricCard
+                    title={metric.title}
+                    value={metric.value}
+                    change={metric.change}
+                    changeLabel={metric.changeLabel}
+                    icon={metric.icon}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <div className="grid gap-8 lg:grid-cols-3">
+              {/* Recent Projects */}
+              <motion.div variants={staggerItemVariants} className="lg:col-span-2">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg">Recent Projects</CardTitle>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/app/projects">
+                        View all
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {projects.map((project) => (
+                        <Link
+                          key={project.id}
+                          href={`/app/projects/${project.id}/overview`}
+                          className="block"
+                        >
+                          <div className="flex items-center justify-between p-4 rounded-lg border border-neutral-200 hover:border-primary-300 hover:bg-primary-50/50 transition-colors">
+                            <div className="flex-1">
+                              <h3 className="font-medium text-neutral-900">
+                                {project.name}
+                              </h3>
+                              <p className="text-sm text-neutral-500">
+                                {project.responses.toLocaleString()} responses
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="text-right">
+                                <p className="text-xl font-bold text-neutral-900">
+                                  {project.score}
+                                </p>
+                                <div className="flex items-center gap-1 text-sm">
+                                  {project.trend === 'up' ? (
+                                    <>
+                                      <ArrowUpRight className="h-4 w-4 text-green-500" />
+                                      <span className="text-green-600">Up</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ArrowDownRight className="h-4 w-4 text-red-500" />
+                                      <span className="text-red-600">Down</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="w-16">
+                                <Progress value={project.score * 20} />
+                              </div>
                             </div>
                           </div>
-                          <div className="w-16">
-                            <Progress value={project.score * 20} />
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Recent Alerts */}
-          <motion.div variants={staggerItemVariants}>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Recent Alerts</CardTitle>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/app/alerts">View all</Link>
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {alerts.map((alert) => (
-                    <div
-                      key={alert.id}
-                      className="flex gap-3 p-3 rounded-lg bg-neutral-50"
-                    >
-                      <div className="flex-1">
-                        <p className="text-sm text-neutral-700">{alert.message}</p>
-                        <p className="mt-1 text-xs text-neutral-500">{alert.time}</p>
-                      </div>
-                      <Badge
-                        variant={
-                          alert.type === 'warning'
-                            ? 'warning'
-                            : alert.type === 'success'
-                            ? 'success'
-                            : 'secondary'
-                        }
-                        className="h-fit"
-                      >
-                        {alert.type}
-                      </Badge>
+                        </Link>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div variants={staggerItemVariants}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Button variant="outline" className="h-auto py-4" asChild>
-                  <Link href="/app/projects/new" className="flex flex-col items-center gap-2">
-                    <Plus className="h-5 w-5" />
-                    <span>Create project</span>
-                  </Link>
-                </Button>
-                <Button variant="outline" className="h-auto py-4" asChild>
-                  <Link href="/app/widgets" className="flex flex-col items-center gap-2">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Configure widget</span>
-                  </Link>
-                </Button>
-                <Button variant="outline" className="h-auto py-4" asChild>
-                  <Link href="/app/integrations" className="flex flex-col items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    <span>Add integration</span>
-                  </Link>
-                </Button>
-                <Button variant="outline" className="h-auto py-4" asChild>
-                  <Link href="/app/reports/csat" className="flex flex-col items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    <span>View reports</span>
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              {/* Recent Alerts */}
+              <motion.div variants={staggerItemVariants}>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg">Recent Alerts</CardTitle>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/app/alerts">View all</Link>
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {alerts.map((alert) => (
+                        <div
+                          key={alert.id}
+                          className="flex gap-3 p-3 rounded-lg bg-neutral-50"
+                        >
+                          <div className="flex-1">
+                            <p className="text-sm text-neutral-700">{alert.message}</p>
+                            <p className="mt-1 text-xs text-neutral-500">{alert.time}</p>
+                          </div>
+                          <Badge
+                            variant={
+                              alert.type === 'warning'
+                                ? 'warning'
+                                : alert.type === 'success'
+                                ? 'success'
+                                : 'secondary'
+                            }
+                            className="h-fit"
+                          >
+                            {alert.type}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+
+            {/* Quick Actions */}
+            <motion.div variants={staggerItemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Button variant="outline" className="h-auto py-4" asChild>
+                      <Link href="/app/projects/new" className="flex flex-col items-center gap-2">
+                        <Plus className="h-5 w-5" />
+                        <span>Create project</span>
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="h-auto py-4" asChild>
+                      <Link href="/app/widgets" className="flex flex-col items-center gap-2">
+                        <MessageSquare className="h-5 w-5" />
+                        <span>Configure widget</span>
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="h-auto py-4" asChild>
+                      <Link href="/app/integrations" className="flex flex-col items-center gap-2">
+                        <TrendingUp className="h-5 w-5" />
+                        <span>Add integration</span>
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="h-auto py-4" asChild>
+                      <Link href="/app/reports/csat" className="flex flex-col items-center gap-2">
+                        <BarChart3 className="h-5 w-5" />
+                        <span>View reports</span>
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </>
+        )}
       </motion.div>
     </PageContainer>
   );
