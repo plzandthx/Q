@@ -92,6 +92,8 @@ const buttonVariants = cva(
         sm: 'h-8 px-3 text-xs',
         md: 'h-10 px-4 text-sm',
         lg: 'h-12 px-6 text-base',
+        // XL - Extra large for marketing and high impact placements
+        xl: 'h-14 px-8 text-lg font-semibold',
         // Icon button - square
         icon: 'h-10 w-10 p-0',
         'icon-sm': 'h-8 w-8 p-0',

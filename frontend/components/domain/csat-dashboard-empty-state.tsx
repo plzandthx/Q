@@ -6,6 +6,7 @@ import { PixelTrail } from '@/components/ui/pixel-trail';
 import { useScreenSize } from '@/components/hooks/use-screen-size';
 import { Button } from '@/components/ui/button';
 import { staggerItemVariants } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 
 interface CSATDashboardEmptyStateProps {
   className?: string;
@@ -17,9 +18,9 @@ export function CSATDashboardEmptyState({ className }: CSATDashboardEmptyStatePr
   return (
     <motion.div
       variants={staggerItemVariants}
-      className={className}
+      className={cn('mt-8 md:mt-12', className)}
     >
-      <div className="relative w-full min-h-[500px] bg-[#dee0d8] rounded-2xl overflow-hidden">
+      <div className="relative w-full min-h-[500px] bg-[#E5E9E2] rounded-2xl overflow-hidden">
         {/* Pixel Trail Animation Background */}
         <div className="absolute inset-0 z-0">
           <PixelTrail
@@ -32,13 +33,14 @@ export function CSATDashboardEmptyState({ className }: CSATDashboardEmptyStatePr
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full min-h-[500px] pointer-events-none px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#3d8b8b] text-center max-w-lg leading-tight">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-[#3d8b8b] text-center max-w-lg leading-tight">
             Connect the dots between your customer feedback and business insights
           </h2>
           <div className="mt-8 pointer-events-auto">
             <Button
               asChild
-              className="bg-[#3d8b8b] hover:bg-[#357878] text-white px-6 py-2 h-auto"
+              size="xl"
+              className="bg-[#3d8b8b] hover:bg-[#357878] text-white"
             >
               <Link href="/app/projects/new">
                 Start your first project

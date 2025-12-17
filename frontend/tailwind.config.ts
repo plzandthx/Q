@@ -163,6 +163,8 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+        // Degular - Adobe font for marketing headlines
+        display: ['degular', 'Inter', 'system-ui', 'sans-serif'],
       },
 
       // Custom font sizes with line heights

@@ -59,6 +59,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Adobe Fonts - Degular */}
+        <link rel="stylesheet" href="https://use.typekit.net/xxxxxxx.css" />
+      </head>
       <body className="font-sans antialiased">
         <Providers>{children}</Providers>
       </body>
