@@ -28,3 +28,6 @@ export * from './tooltip';
 export * from './tabs';
 export * from './dialog';
 export * from './dropdown-menu';
+
+// Animation
+export * from './pixel-trail';
